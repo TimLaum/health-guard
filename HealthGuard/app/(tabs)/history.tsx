@@ -3,55 +3,34 @@
  * Shows past analysis results
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppColors } from '@/constants/colors';
+import { AnalysisRecord, getAnalysisHistory } from '@/services/api';
 
-interface HistoryItem {
-  id: string;
-  type: 'eye' | 'skin' | 'nail';
-  date: string;
-  condition: string;
-  severity: 'low' | 'moderate' | 'high';
-  confidence: number;
+// ─── Helpers ─────────────────────────────────────────────────────────
+
+const RESULT_TYPE_LABELS: Record<string, string> = {
+  diabetes: 'Diabetes',
+  anemia: 'Anemia',
+  deficiency: 'Deficiency',
+};
+
+function deriveSeverity(probability: number): 'low' | 'moderate' | 'high' {
+  if (probability >= 0.7) return 'high';
+  if (probability >= 0.4) return 'moderate';
+  return 'low';
 }
-
-// Demo data — in production, fetch from API via getAnalysisHistory()
-const DEMO_HISTORY: HistoryItem[] = [
-  {
-    id: '1',
-    type: 'eye',
-    date: '2026-02-08',
-    condition: 'No diabetic indicators detected',
-    severity: 'low',
-    confidence: 0.92,
-  },
-  {
-    id: '2',
-    type: 'nail',
-    date: '2026-02-05',
-    condition: 'Mild iron deficiency signs',
-    severity: 'moderate',
-    confidence: 0.78,
-  },
-  {
-    id: '3',
-    type: 'skin',
-    date: '2026-01-28',
-    condition: 'Vitamin D deficiency indicators',
-    severity: 'moderate',
-    confidence: 0.85,
-  },
-];
 
 const TYPE_CONFIG = {
   eye: {
@@ -86,10 +65,29 @@ export default function HistoryScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<FilterType>('all');
+  const [history, setHistory] = useState<AnalysisRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  async function loadHistory() {
+    try {
+      setLoading(true);
+      const data = await getAnalysisHistory();
+      setHistory(data);
+    } catch {
+      // API not available yet — show empty state
+      setHistory([]);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const filteredHistory = filter === 'all'
-    ? DEMO_HISTORY
-    : DEMO_HISTORY.filter(item => item.type === filter);
+    ? history
+    : history.filter(item => item.image_type === filter);
 
   function formatDate(dateStr: string) {
     const date = new Date(dateStr);
@@ -100,9 +98,12 @@ export default function HistoryScreen() {
     });
   }
 
-  function renderItem({ item }: { item: HistoryItem }) {
-    const typeConfig = TYPE_CONFIG[item.type];
-    const severityConfig = SEVERITY_CONFIG[item.severity];
+  function renderItem({ item }: { item: AnalysisRecord }) {
+    const typeConfig = TYPE_CONFIG[item.image_type];
+    const { type: resultType, probability } = item.result;
+    const severity = deriveSeverity(probability);
+    const severityConfig = SEVERITY_CONFIG[severity];
+    const label = RESULT_TYPE_LABELS[resultType] || resultType;
 
     return (
       <TouchableOpacity
@@ -110,7 +111,7 @@ export default function HistoryScreen() {
         onPress={() =>
           router.push({
             pathname: '/results',
-            params: { resultId: item.id, type: item.type },
+            params: { resultId: item._id, type: item.image_type },
           })
         }
         activeOpacity={0.7}
@@ -124,9 +125,9 @@ export default function HistoryScreen() {
         <View style={styles.cardCenter}>
           <Text style={styles.cardType}>{typeConfig.label}</Text>
           <Text style={styles.cardCondition} numberOfLines={1}>
-            {item.condition}
+            {label}: {Math.round(probability * 100)}% probability
           </Text>
-          <Text style={styles.cardDate}>{formatDate(item.date)}</Text>
+          <Text style={styles.cardDate}>{formatDate(item.uploaded_at)}</Text>
         </View>
 
         <View style={styles.cardRight}>
@@ -135,7 +136,6 @@ export default function HistoryScreen() {
               {severityConfig.label}
             </Text>
           </View>
-          <Text style={styles.confidence}>{Math.round(item.confidence * 100)}%</Text>
         </View>
       </TouchableOpacity>
     );
@@ -164,7 +164,7 @@ export default function HistoryScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>History</Text>
-        <Text style={styles.subtitle}>{DEMO_HISTORY.length} total scans</Text>
+        <Text style={styles.subtitle}>{history.length} total scans</Text>
       </View>
 
       {/* Filters */}
@@ -183,14 +183,20 @@ export default function HistoryScreen() {
       </View>
 
       {/* List */}
-      <FlatList
-        data={filteredHistory}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={renderEmpty}
-      />
+      {loading ? (
+        <View style={styles.emptyContainer}>
+          <ActivityIndicator size="large" color={AppColors.primary} />
+        </View>
+      ) : (
+        <FlatList
+          data={filteredHistory}
+          renderItem={renderItem}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmpty}
+        />
+      )}
     </View>
   );
 }
@@ -295,11 +301,6 @@ const styles = StyleSheet.create({
   severityText: {
     fontSize: 11,
     fontWeight: '700',
-  },
-  confidence: {
-    fontSize: 12,
-    color: AppColors.gray400,
-    fontWeight: '600',
   },
   emptyContainer: {
     alignItems: 'center',

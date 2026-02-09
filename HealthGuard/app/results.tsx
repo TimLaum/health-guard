@@ -1,15 +1,16 @@
 /**
  * Results Screen - HealthGuard Vision
- * Displays analysis results with diagnosis and recommendations
+ * Displays analysis results with probability bars and recommendations
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
   Dimensions,
 } from 'react-native';
 import { Image } from 'expo-image';
@@ -17,6 +18,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppColors } from '@/constants/colors';
+import { AnalysisRecord, getAnalysisResult } from '@/services/api';
 
 const { width } = Dimensions.get('window');
 
@@ -41,51 +43,23 @@ const TYPE_CONFIG = {
   },
 };
 
-// Demo result data — in production, fetch from API
-const DEMO_RESULTS = {
-  eye: {
-    condition: 'No diabetic retinopathy detected',
-    confidence: 0.92,
-    severity: 'low' as const,
-    description:
-      'The AI analysis of your retinal image did not find significant indicators of diabetic retinopathy. Your eye appears healthy based on the visible features.',
-    recommendations: [
-      'Continue regular annual eye check-ups',
-      'Monitor blood sugar levels regularly',
-      'Maintain a balanced diet rich in omega-3',
-      'Protect your eyes from prolonged screen exposure',
-      'Stay hydrated throughout the day',
-    ],
-  },
-  skin: {
-    condition: 'Possible Vitamin D deficiency signs',
-    confidence: 0.85,
-    severity: 'moderate' as const,
-    description:
-      'The analysis detected possible indicators of Vitamin D deficiency in your skin tone and texture patterns. This is a preliminary screening result.',
-    recommendations: [
-      'Get 15-20 minutes of sunlight daily',
-      'Consider Vitamin D supplements (consult your doctor)',
-      'Include fatty fish, eggs, and fortified foods in your diet',
-      'Schedule a blood test to confirm Vitamin D levels',
-      'Consult a dermatologist for a thorough evaluation',
-    ],
-  },
-  nail: {
-    condition: 'Mild iron deficiency indicators',
-    confidence: 0.78,
-    severity: 'moderate' as const,
-    description:
-      'The nail bed analysis shows some indicators that may suggest iron deficiency (anemia). Pale nail beds and slight spoon-shaped appearance were detected.',
-    recommendations: [
-      'Increase iron-rich foods: red meat, spinach, lentils',
-      'Pair iron foods with Vitamin C for better absorption',
-      'Schedule a complete blood count (CBC) test',
-      'Avoid tea/coffee during meals (they inhibit iron absorption)',
-      'Consult a doctor if you experience fatigue or dizziness',
-    ],
-  },
+const RESULT_TYPE_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
+  diabetes: { label: 'Diabetes', icon: 'eye-outline', color: '#8B5CF6' },
+  anemia: { label: 'Anemia', icon: 'water-outline', color: '#EC4899' },
+  deficiency: { label: 'Deficiency', icon: 'leaf-outline', color: '#F59E0B' },
 };
+
+function deriveSeverity(p: number): 'low' | 'moderate' | 'high' {
+  if (p >= 0.7) return 'high';
+  if (p >= 0.4) return 'moderate';
+  return 'low';
+}
+
+function barColor(p: number): string {
+  if (p >= 0.7) return AppColors.danger;
+  if (p >= 0.4) return AppColors.warning;
+  return AppColors.success;
+}
 
 const SEVERITY_CONFIG = {
   low: { label: 'Normal', color: AppColors.success, bg: '#ECFDF5', icon: 'checkmark-circle' as const },
@@ -93,20 +67,98 @@ const SEVERITY_CONFIG = {
   high: { label: 'High Risk', color: AppColors.danger, bg: '#FEF2F2', icon: 'warning' as const },
 };
 
+function getRecommendations(record: AnalysisRecord): string[] {
+  const { type, probability } = record.result;
+  const recs: string[] = [];
+
+  if (probability >= 0.4) {
+    switch (type) {
+      case 'diabetes':
+        recs.push('Schedule a comprehensive eye examination with an ophthalmologist');
+        recs.push('Monitor your blood sugar levels regularly');
+        recs.push('Maintain a balanced diet low in processed sugars');
+        break;
+      case 'anemia':
+        recs.push('Consider a complete blood count (CBC) test');
+        recs.push('Increase iron-rich foods: red meat, spinach, lentils');
+        recs.push('Pair iron foods with Vitamin C for better absorption');
+        break;
+      case 'deficiency':
+        recs.push('Get 15-20 minutes of sunlight daily for Vitamin D');
+        recs.push('Include fatty fish, eggs, and fortified foods in your diet');
+        recs.push('Schedule a blood test to confirm vitamin levels');
+        break;
+    }
+  } else {
+    recs.push('Continue regular health check-ups');
+    recs.push('Maintain a balanced and nutritious diet');
+    recs.push('Stay hydrated and exercise regularly');
+  }
+
+  recs.push('Always consult a qualified healthcare professional for proper evaluation');
+  return recs;
+}
+
 export default function ResultsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { type, imageUri } = useLocalSearchParams<{
+  const { type, imageUri, resultId } = useLocalSearchParams<{
     type?: string;
     imageUri?: string;
     resultId?: string;
   }>();
 
-  const scanType = (type as 'eye' | 'skin' | 'nail') || 'eye';
+  const [record, setRecord] = useState<AnalysisRecord | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadResult();
+  }, [resultId]);
+
+  async function loadResult() {
+    if (!resultId) { setLoading(false); return; }
+    try {
+      const data = await getAnalysisResult(resultId);
+      setRecord(data);
+    } catch {
+      // API unavailable — stay in loading=false / null state
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <ActivityIndicator size="large" color={AppColors.primary} />
+        <Text style={{ marginTop: 12, color: AppColors.gray500 }}>Loading results...</Text>
+      </View>
+    );
+  }
+
+  if (!record) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <Ionicons name="alert-circle-outline" size={64} color={AppColors.gray300} />
+        <Text style={{ marginTop: 12, fontSize: 16, color: AppColors.gray600 }}>
+          Result not found
+        </Text>
+        <TouchableOpacity style={{ marginTop: 20 }} onPress={() => router.back()}>
+          <Text style={{ color: AppColors.primary, fontWeight: '700' }}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const scanType = record.image_type;
   const config = TYPE_CONFIG[scanType];
-  const result = DEMO_RESULTS[scanType];
-  const severity = SEVERITY_CONFIG[result.severity];
-  const confidencePercent = Math.round(result.confidence * 100);
+  const { type: resultType, probability, model_version } = record.result;
+  const severity = deriveSeverity(probability);
+  const sevConfig = SEVERITY_CONFIG[severity];
+  const resultTypeConfig = RESULT_TYPE_CONFIG[resultType] || RESULT_TYPE_CONFIG.diabetes;
+  const pct = Math.round(probability * 100);
+  const recommendations = getRecommendations(record);
+  const displayUri = imageUri || record.image_url;
 
   return (
     <ScrollView
@@ -120,9 +172,9 @@ export default function ResultsScreen() {
       </TouchableOpacity>
 
       {/* Image Preview */}
-      {imageUri && (
+      {displayUri && (
         <View style={styles.imageContainer}>
-          <Image source={{ uri: imageUri }} style={styles.image} contentFit="cover" />
+          <Image source={{ uri: displayUri }} style={styles.image} contentFit="cover" />
           <View style={[styles.typeBadge, { backgroundColor: config.bgColor }]}>
             <Ionicons name={config.icon} size={16} color={config.color} />
             <Text style={[styles.typeBadgeText, { color: config.color }]}>{config.label}</Text>
@@ -130,36 +182,35 @@ export default function ResultsScreen() {
         </View>
       )}
 
-      {/* Result Card */}
+      {/* Overall Severity Card */}
       <View style={styles.resultCard}>
-        {/* Severity Badge */}
-        <View style={[styles.severityBanner, { backgroundColor: severity.bg }]}>
-          <Ionicons name={severity.icon} size={24} color={severity.color} />
+        <View style={[styles.severityBanner, { backgroundColor: sevConfig.bg }]}>
+          <Ionicons name={sevConfig.icon} size={24} color={sevConfig.color} />
           <View>
-            <Text style={[styles.severityLabel, { color: severity.color }]}>{severity.label}</Text>
-            <Text style={styles.confidenceText}>Confidence: {confidencePercent}%</Text>
+            <Text style={[styles.severityLabel, { color: sevConfig.color }]}>{sevConfig.label}</Text>
+            <Text style={styles.confidenceText}>
+              Scanned on {new Date(record.uploaded_at).toLocaleDateString()}
+            </Text>
           </View>
         </View>
 
-        {/* Condition */}
-        <Text style={styles.conditionTitle}>{result.condition}</Text>
-        <Text style={styles.conditionDescription}>{result.description}</Text>
-
-        {/* Confidence Bar */}
-        <View style={styles.confidenceBar}>
-          <Text style={styles.confidenceBarLabel}>AI Confidence</Text>
+        {/* Result */}
+        <Text style={styles.sectionLabel}>Detected Condition</Text>
+        <View style={styles.probabilityRow}>
+          <View style={styles.probLabelRow}>
+            <Ionicons name={resultTypeConfig.icon} size={18} color={resultTypeConfig.color} />
+            <Text style={styles.probLabel}>{resultTypeConfig.label}</Text>
+            <Text style={[styles.probValue, { color: barColor(probability) }]}>{pct}%</Text>
+          </View>
           <View style={styles.barContainer}>
             <View
               style={[
                 styles.barFill,
-                {
-                  width: `${confidencePercent}%`,
-                  backgroundColor: severity.color,
-                },
+                { width: `${pct}%`, backgroundColor: barColor(probability) },
               ]}
             />
           </View>
-          <Text style={styles.confidenceBarValue}>{confidencePercent}%</Text>
+          <Text style={styles.modelVersion}>Model: {model_version}</Text>
         </View>
       </View>
 
@@ -170,7 +221,7 @@ export default function ResultsScreen() {
           <Text style={styles.recommendationsTitle}>Recommendations</Text>
         </View>
 
-        {result.recommendations.map((rec, index) => (
+        {recommendations.map((rec, index) => (
           <View key={index} style={styles.recItem}>
             <View style={styles.recNumber}>
               <Text style={styles.recNumberText}>{index + 1}</Text>
@@ -217,6 +268,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: AppColors.background,
+  },
+  centered: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   content: {
     padding: 20,
@@ -289,30 +344,32 @@ const styles = StyleSheet.create({
     color: AppColors.gray500,
     marginTop: 1,
   },
-  conditionTitle: {
-    fontSize: 20,
+  sectionLabel: {
+    fontSize: 16,
     fontWeight: '700',
     color: AppColors.gray900,
-    marginBottom: 8,
+    marginBottom: 14,
   },
-  conditionDescription: {
-    fontSize: 14,
-    color: AppColors.gray600,
-    lineHeight: 22,
-    marginBottom: 20,
+  probabilityRow: {
+    marginBottom: 14,
   },
-  confidenceBar: {
+  probLabelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 6,
+    marginBottom: 6,
   },
-  confidenceBarLabel: {
-    fontSize: 12,
-    color: AppColors.gray500,
+  probLabel: {
+    flex: 1,
+    fontSize: 14,
     fontWeight: '600',
+    color: AppColors.gray700,
+  },
+  probValue: {
+    fontSize: 14,
+    fontWeight: '700',
   },
   barContainer: {
-    flex: 1,
     height: 8,
     backgroundColor: AppColors.gray100,
     borderRadius: 4,
@@ -322,12 +379,10 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 4,
   },
-  confidenceBarValue: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: AppColors.gray700,
-    width: 36,
-    textAlign: 'right',
+  modelVersion: {
+    fontSize: 11,
+    color: AppColors.gray400,
+    marginTop: 6,
   },
   recommendationsCard: {
     backgroundColor: AppColors.white,

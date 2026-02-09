@@ -25,7 +25,8 @@ export default function SignupScreen() {
   const router = useRouter();
   const { register } = useAuth();
 
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -33,7 +34,7 @@ export default function SignupScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSignup() {
-    if (!fullName.trim() || !email.trim() || !password.trim()) {
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim()) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -50,7 +51,7 @@ export default function SignupScreen() {
 
     setIsLoading(true);
     try {
-      await register(fullName.trim(), email.trim(), password);
+      await register(firstName.trim(), lastName.trim(), email.trim(), password);
       router.replace('/(tabs)');
     } catch (error: any) {
       Alert.alert('Registration Failed', error.message || 'Could not create account');
@@ -85,16 +86,29 @@ export default function SignupScreen() {
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>Start monitoring your health today</Text>
 
-          {/* Full Name Input */}
+          {/* First Name Input */}
           <View style={styles.inputContainer}>
             <Ionicons name="person-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="Full Name"
+              placeholder="First Name"
               placeholderTextColor={AppColors.gray400}
-              value={fullName}
-              onChangeText={setFullName}
-              autoComplete="name"
+              value={firstName}
+              onChangeText={setFirstName}
+              autoComplete="given-name"
+            />
+          </View>
+
+          {/* Last Name Input */}
+          <View style={styles.inputContainer}>
+            <Ionicons name="person-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Last Name"
+              placeholderTextColor={AppColors.gray400}
+              value={lastName}
+              onChangeText={setLastName}
+              autoComplete="family-name"
             />
           </View>
 

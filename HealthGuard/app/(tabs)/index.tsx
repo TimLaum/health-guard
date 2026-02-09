@@ -71,7 +71,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
 
-  const firstName = user?.fullName?.split(' ')[0] || 'User';
+  const firstName = user?.first_name || 'User';
 
   function handleScan(type: 'eye' | 'skin' | 'nail') {
     router.push({ pathname: '/(tabs)/capture', params: { type } });

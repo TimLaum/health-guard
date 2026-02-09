@@ -19,6 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppColors } from '@/constants/colors';
+import { uploadImageForAnalysis } from '@/services/api';
 
 const { width } = Dimensions.get('window');
 
@@ -102,20 +103,24 @@ export default function CaptureScreen() {
 
     setIsAnalyzing(true);
 
-    // Simulate analysis delay (replace with real API call)
-    // In production: const result = await uploadImageForAnalysis(imageUri, scanType);
-    setTimeout(() => {
+    try {
+      const record = await uploadImageForAnalysis(imageUri, scanType);
       setIsAnalyzing(false);
       router.push({
         pathname: '/results',
         params: {
           type: scanType,
           imageUri,
-          // In production, pass the result ID from the API
-          resultId: 'demo-result-001',
+          resultId: record._id,
         },
       });
-    }, 2500);
+    } catch (error: any) {
+      setIsAnalyzing(false);
+      Alert.alert(
+        'Analysis Failed',
+        error.message || 'Could not analyze the image. Please try again.',
+      );
+    }
   }
 
   function resetImage() {

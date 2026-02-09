@@ -32,14 +32,11 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
 
-  const displayName = user?.fullName || 'Demo User';
-  const displayEmail = user?.email || 'demo@healthguard.app';
-  const initials = displayName
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  const displayName = user ? `${user.first_name} ${user.last_name}` : 'User';
+  const displayEmail = user?.email || '';
+  const initials = user
+    ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase()
+    : 'U';
 
   function handleLogout() {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [

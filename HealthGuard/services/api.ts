@@ -73,10 +73,11 @@ export interface LoginResponse {
 }
 
 export interface User {
-  id: string;
+  _id: string;
   email: string;
-  fullName: string;
-  createdAt: string;
+  first_name: string;
+  last_name: string;
+  created_at: string;
 }
 
 export async function loginApi(email: string, password: string): Promise<LoginResponse> {
@@ -87,13 +88,19 @@ export async function loginApi(email: string, password: string): Promise<LoginRe
 }
 
 export async function registerApi(
-  fullName: string,
+  firstName: string,
+  lastName: string,
   email: string,
   password: string
 ): Promise<LoginResponse> {
   return request<LoginResponse>(API_ENDPOINTS.REGISTER, {
     method: 'POST',
-    body: JSON.stringify({ fullName, email, password }),
+    body: JSON.stringify({
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      password,
+    }),
   });
 }
 
@@ -103,23 +110,24 @@ export async function getProfileApi(): Promise<User> {
 
 // ─── Analysis API ────────────────────────────────────────────────────
 export interface AnalysisResult {
-  id: string;
-  type: 'eye' | 'skin' | 'nail';
-  imageUri: string;
-  diagnosis: {
-    condition: string;
-    confidence: number;
-    severity: 'low' | 'moderate' | 'high';
-    description: string;
-  };
-  recommendations: string[];
-  createdAt: string;
+  type: 'diabetes' | 'anemia' | 'deficiency';
+  probability: number;
+  model_version: string;
+}
+
+export interface AnalysisRecord {
+  _id: string;
+  user_id: string;
+  image_type: 'eye' | 'skin' | 'nail';
+  image_url: string;
+  uploaded_at: string;
+  result: AnalysisResult;
 }
 
 export async function uploadImageForAnalysis(
   imageUri: string,
-  type: 'eye' | 'skin' | 'nail'
-): Promise<AnalysisResult> {
+  imageType: 'eye' | 'skin' | 'nail'
+): Promise<AnalysisRecord> {
   const token = await getToken();
   const formData = new FormData();
 
@@ -132,7 +140,7 @@ export async function uploadImageForAnalysis(
     name: filename,
     type: mimeType,
   } as any);
-  formData.append('type', type);
+  formData.append('image_type', imageType);
 
   const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.UPLOAD_IMAGE}`, {
     method: 'POST',
@@ -150,10 +158,10 @@ export async function uploadImageForAnalysis(
   return response.json();
 }
 
-export async function getAnalysisHistory(): Promise<AnalysisResult[]> {
-  return request<AnalysisResult[]>(API_ENDPOINTS.GET_HISTORY);
+export async function getAnalysisHistory(): Promise<AnalysisRecord[]> {
+  return request<AnalysisRecord[]>(API_ENDPOINTS.GET_HISTORY);
 }
 
-export async function getAnalysisResult(id: string): Promise<AnalysisResult> {
-  return request<AnalysisResult>(`${API_ENDPOINTS.GET_RESULTS}/${id}`);
+export async function getAnalysisResult(id: string): Promise<AnalysisRecord> {
+  return request<AnalysisRecord>(`${API_ENDPOINTS.GET_RESULTS}/${id}`);
 }

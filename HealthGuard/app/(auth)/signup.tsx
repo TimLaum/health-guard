@@ -14,6 +14,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Pressable,
 } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
@@ -27,6 +28,7 @@ export default function SignupScreen() {
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [sex, setSex] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -34,7 +36,7 @@ export default function SignupScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSignup() {
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim()) {
+    if (!firstName.trim() || !lastName.trim() || !sex.trim() || !email.trim() || !password.trim()) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -51,7 +53,7 @@ export default function SignupScreen() {
 
     setIsLoading(true);
     try {
-      await register(firstName.trim(), lastName.trim(), email.trim(), password);
+      await register(firstName.trim(), lastName.trim(), sex.trim(), email.trim(), password);
       router.replace('/(tabs)');
     } catch (error: any) {
       Alert.alert('Registration Failed', error.message || 'Could not create account');
@@ -110,6 +112,35 @@ export default function SignupScreen() {
               onChangeText={setLastName}
               autoComplete="family-name"
             />
+          </View>
+
+          {/* Sex Selection */}
+          <View style={styles.sexContainer}>
+            <View style={styles.sexLabelRow}>
+              <Ionicons name="male-female-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+              <Text style={styles.sexLabel}>Sex</Text>
+            </View>
+            <View style={styles.radioGroup}>
+              <Pressable 
+                style={[styles.radioOption, sex === 'M' && styles.radioOptionSelected]}
+                onPress={() => setSex('M')}
+              >
+                <View style={[styles.radioButton, sex === 'M' && styles.radioButtonSelected]}>
+                  {sex === 'M' && <View style={styles.radioButtonInner} />}
+                </View>
+                <Text style={[styles.radioText, sex === 'M' && styles.radioTextSelected]}>Male</Text>
+              </Pressable>
+              
+              <Pressable 
+                style={[styles.radioOption, sex === 'F' && styles.radioOptionSelected]}
+                onPress={() => setSex('F')}
+              >
+                <View style={[styles.radioButton, sex === 'F' && styles.radioButtonSelected]}>
+                  {sex === 'F' && <View style={styles.radioButtonInner} />}
+                </View>
+                <Text style={[styles.radioText, sex === 'F' && styles.radioTextSelected]}>Female</Text>
+              </Pressable>
+            </View>
           </View>
 
           {/* Email Input */}
@@ -285,6 +316,66 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     padding: 4,
+  },
+  sexContainer: {
+    marginBottom: 16,
+  },
+  sexLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sexLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: AppColors.gray900,
+  },
+  radioGroup: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  radioOption: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    backgroundColor: AppColors.inputBg,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: AppColors.gray200,
+  },
+  radioOptionSelected: {
+    borderColor: AppColors.primary,
+    backgroundColor: `${AppColors.primary}10`,
+  },
+  radioButton: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: AppColors.gray300,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  radioButtonSelected: {
+    borderColor: AppColors.primary,
+  },
+  radioButtonInner: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: AppColors.primary,
+  },
+  radioText: {
+    fontSize: 15,
+    color: AppColors.gray700,
+    fontWeight: '500',
+  },
+  radioTextSelected: {
+    color: AppColors.primary,
+    fontWeight: '600',
   },
   terms: {
     fontSize: 13,

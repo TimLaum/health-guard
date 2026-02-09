@@ -77,6 +77,7 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
+  sex: string;
   created_at: string;
 }
 
@@ -90,6 +91,7 @@ export async function loginApi(email: string, password: string): Promise<LoginRe
 export async function registerApi(
   firstName: string,
   lastName: string,
+  sex: string,
   email: string,
   password: string
 ): Promise<LoginResponse> {
@@ -98,6 +100,7 @@ export async function registerApi(
     body: JSON.stringify({
       first_name: firstName,
       last_name: lastName,
+      sex,
       email,
       password,
     }),

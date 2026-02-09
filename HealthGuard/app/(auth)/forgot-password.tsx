@@ -16,7 +16,6 @@ import {
   Alert,
 } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { AppColors } from '@/constants/colors';
 

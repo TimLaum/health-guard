@@ -52,9 +52,11 @@ export default function TabLayout() {
         options={{
           title: 'Scan',
           tabBarIcon: ({ color, focused }) => (
-            <View style={[styles.scanTab, focused && styles.scanTabActive]}>
-              <Ionicons name="scan" size={24} color={focused ? AppColors.white : color} />
-            </View>
+            <Ionicons
+              name={focused ? 'scan' : 'scan-outline'}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -92,16 +94,16 @@ const styles = StyleSheet.create({
   scanTab: {
     width: 44,
     height: 44,
-    borderRadius: 14,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   scanTabActive: {
     backgroundColor: AppColors.primary,
     shadowColor: AppColors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
   },
 });

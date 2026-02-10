@@ -6,6 +6,9 @@
 import * as SecureStore from 'expo-secure-store';
 import { API_BASE_URL, API_ENDPOINTS } from '@/constants/api';
 import { Platform } from 'react-native';
+import {USE_MOCK_API} from '@/constants/api';
+
+
 
 const TOKEN_KEY = 'healthguard_jwt_token';
 
@@ -50,20 +53,37 @@ async function request<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const headers = await authHeaders();
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      ...headers,
-      ...options.headers,
-    },
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  console.log('API Request:', {
+    url,
+    method: options.method || 'GET',
+    baseUrl: API_BASE_URL,
   });
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...headers,
+        ...options.headers,
+      },
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Network error' }));
-    throw new Error(error.message || `HTTP ${response.status}`);
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      console.error('API Error:', error);
+      throw new Error(error.message || `HTTP ${response.status}`);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('API Request Failed:', {
+      url,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
   }
-
-  return response.json();
 }
 
 // ─── Auth API ────────────────────────────────────────────────────────
@@ -82,6 +102,26 @@ export interface User {
 }
 
 export async function loginApi(email: string, password: string): Promise<LoginResponse> {
+  if (USE_MOCK_API) {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (email === 'test@example.com' && password === 'password123') {
+      const mockUser: User = {
+        _id: '1',
+        email: 'test@example.com',
+        first_name: 'Test',
+        last_name: 'User',
+        sex: 'M',
+        created_at: new Date().toISOString(),
+      };
+      return {
+        token: 'mock_token_' + Date.now(),
+        user: mockUser,
+      };
+    }
+    throw new Error('Invalid credentials');
+  }
+  
   return request<LoginResponse>(API_ENDPOINTS.LOGIN, {
     method: 'POST',
     body: JSON.stringify({ email, password }),

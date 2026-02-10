@@ -3,12 +3,15 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-
+# Obtenir le chemin du répertoire de ce script
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 #  Charger le modèle TFLite
 
-def load_model(model_path="nail_anemia_model.tflite"):
+def load_model(model_path=None):
     """Charge le modèle TFLite"""
+    if model_path is None:
+        model_path = os.path.join(SCRIPT_DIR, "ml_models", "nail_anemia_model.tflite")
     interpreter = tf.lite.Interpreter(model_path=model_path)
     interpreter.allocate_tensors()
     return interpreter
@@ -61,60 +64,82 @@ def predict(interpreter, image_path):
 
 # Interpréter les résultats
 
-def interpret_result(hb_level, sexe=None):
-    """Interprète le niveau d'hémoglobine"""
-    # Niveaux normaux d'hémoglobine en g/L
-    if hb_level < 110:
-        status = "ANÉMIE DÉTECTÉE"
-        severity = "Sévère" if hb_level < 80 else "Modérée" if hb_level < 100 else "Légère"
-        return f"{status} ({severity})"
-    elif hb_level < 120:
-        return "Limite inférieure (surveillance recommandée)"
-    elif hb_level < 160:
-        return "Normal"
+def interpret_result(hb_level, sexe):
+    """
+    Interprète le niveau d'hémoglobine selon le sexe
+    
+    Args:
+        hb_level (float): Niveau d'hémoglobine prédit en g/L
+        sexe (str): 'homme' ou 'femme'
+    
+    Returns:
+        dict: Résultat avec statut, sévérité et recommandation
+    """
+    # Seuils selon le sexe (en g/L)
+    if sexe == "homme":
+        seuil_anemie_severe = 80
+        seuil_anemie_moderee = 100
+        seuil_anemie_legere = 130
+        seuil_normal_max = 170
+        range_normal = "130-170 g/L"
+    elif sexe == "femme":
+        seuil_anemie_severe = 80
+        seuil_anemie_moderee = 100
+        seuil_anemie_legere = 120
+        seuil_normal_max = 160
+        range_normal = "120-160 g/L"
     else:
-        return "Élevé (vérification recommandée)"
-
-
-
-# Utilisation
-
-if __name__ == "__main__":
-    # Charger le modèle TFLite
-    print("Chargement du modèle TFLite...")
-    interpreter = load_model("nail_anemia_model.tflite")
-    print(f"Modèle TFLite chargé avec succès")
+        raise ValueError(f"Sexe invalide: '{sexe}'. Attendu: 'homme' ou 'femme'.")
     
-    # Exemple 1 : Prédiction sur une seule image
-    image_path = "./dataset/photo/1.jpg"  # Modifier avec votre image
-    
-    if os.path.exists(image_path):
-        print(f"\n Analyse de l'image: {image_path}")
-        hb_predicted = predict(interpreter, image_path)
-        
-        print(f"┌{'─'*50}┐")
-        print(f"│  Niveau d'hémoglobine prédit: {hb_predicted:.1f} g/L{' '*8}│")
-        print(f"│  Statut: {interpret_result(hb_predicted):<36}│")
-        print(f"└{'─'*50}┘")
+    # Déterminer le statut
+    if hb_level < seuil_anemie_severe:
+        return {
+            "message": "Anémie sévère détectée, consultation médicale urgente recommandée",
+            "hb_level": round(hb_level, 1)+" g/L"
+        }
+    elif hb_level < seuil_anemie_moderee:
+        return {
+            "message": "Anémie modérée détectée, consultation médicale recommandée rapidement",
+            "hb_level": round(hb_level, 1)+" g/L"
+        }
+    elif hb_level < seuil_anemie_legere:
+        return {
+            "message": "Anémie légère détectée, surveillance et consultation médicale conseillée",
+            "hb_level": round(hb_level, 1)+" g/L"
+        }
+    elif hb_level <= seuil_normal_max:
+        return {
+            "message": "Niveau d'hémoglobine normal, continuez à maintenir une alimentation équilibrée",
+            "hb_level": round(hb_level, 1)+" g/L"
+        }
     else:
-        print(f"Image non trouvée: {image_path}")
+        return {
+            "message": "Niveau d'hémoglobine élevé, consultation médicale pour vérification conseillée",
+            "hb_level": round(hb_level, 1)+" g/L"
+        }
+
+
+
+def analyze_nail_image(image_path, sexe, interpreter=None):
+    """
+    Fonction principale pour l'analyse d'image via API
     
-    # Exemple 2 : Prédiction sur plusieurs images
-    print("\n" + "="*52)
-    print("ANALYSE DE PLUSIEURS IMAGES")
-    print("="*52)
+    Args:
+        image_path (str): Chemin vers l'image de l'ongle
+        sexe (str): Sexe de la personne ('homme' ou 'femme')
+        interpreter: Interpréteur TFLite (optionnel, sera chargé si non fourni)
     
-    test_images = ["./dataset/photo/1.jpg", "./dataset/photo/4.jpg", "./dataset/photo/3.jpg"]
+    Returns:
+        dict: Résultats complets de l'analyse
+    """
+    # Charger le modèle si nécessaire
+    if interpreter is None:
+        interpreter = load_model()
     
-    for img_path in test_images:
-        if os.path.exists(img_path):
-            hb = predict(interpreter, img_path)
-            filename = os.path.basename(img_path)
-            print(f"{filename:15} → {hb:6.1f} g/L  {interpret_result(hb)}")
-        else:
-            print(f"{img_path} non trouvé")
+    # Faire la prédiction
+    hb_level = predict(interpreter, image_path)
     
-    print("\nUtilisation en code:")
-    print("  from predict import load_model, predict")
-    print("  interpreter = load_model('nail_anemia_model.tflite')")
-    print("  hb_level = predict(interpreter, 'votre_image.jpg')")
+    # Interpréter les résultats
+    result = interpret_result(hb_level, sexe)
+    
+    return result

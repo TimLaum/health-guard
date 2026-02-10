@@ -54,8 +54,10 @@ export default function CaptureScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { type } = useLocalSearchParams<{ type?: string }>();
-  const scanType = (type as 'eye' | 'skin' | 'nail') || 'eye';
-  const config = SCAN_CONFIG[scanType];
+  const [scanType, setScanType] = useState<'eye' | 'skin' | 'nail'>(
+    (type as 'eye' | 'skin' | 'nail') || null
+  );
+  const config = scanType ? SCAN_CONFIG[scanType] : null;
 
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -129,6 +131,32 @@ export default function CaptureScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
+      {/* Type Selector */}
+      {!scanType ? (
+        <View style={styles.typeSelectorContainer}>
+          <Text style={styles.selectorTitle}>Select Scan Type</Text>
+          <Text style={styles.selectorSubtitle}>Choose what you want to analyze</Text>
+
+          <View style={styles.typeButtonsGrid}>
+            {(Object.keys(SCAN_CONFIG) as Array<'eye' | 'skin' | 'nail'>).map((key) => {
+              const scanConfig = SCAN_CONFIG[key];
+              return (
+                <TouchableOpacity
+                  key={key}
+                  style={styles.typeCard}
+                  onPress={() => setScanType(key)}
+                >
+                  <View style={[styles.typeCardIconBg, { backgroundColor: scanConfig.bgColor }]}>
+                    <Ionicons name={scanConfig.icon} size={36} color={scanConfig.color} />
+                  </View>
+                  <Text style={styles.typeCardTitle}>{scanConfig.title}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      ) : (
+        <>
       {/* Header */}
       <View style={styles.header}>
         <View style={[styles.headerIconContainer, { backgroundColor: config.bgColor }]}>
@@ -138,6 +166,12 @@ export default function CaptureScreen() {
           <Text style={styles.headerTitle}>{config.title}</Text>
           <Text style={styles.headerSubtitle}>{config.instruction}</Text>
         </View>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setScanType(null)}
+        >
+          <Ionicons name="chevron-back" size={24} color={AppColors.gray700} />
+        </TouchableOpacity>
       </View>
 
       {/* Image Preview or Capture Area */}
@@ -208,6 +242,8 @@ export default function CaptureScreen() {
           )}
         </View>
       )}
+      </>
+      )}
     </View>
   );
 }
@@ -218,11 +254,68 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.background,
     padding: 20,
   },
+  typeSelectorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectorTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: AppColors.gray900,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  selectorSubtitle: {
+    fontSize: 16,
+    color: AppColors.gray500,
+    marginBottom: 36,
+    textAlign: 'center',
+  },
+  typeButtonsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
+    width: '100%',
+    flexWrap: 'wrap',
+  },
+  typeCard: {
+    width: (width - 72) / 3,
+    aspectRatio: 1,
+    backgroundColor: AppColors.white,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  typeCardIconBg: {
+    width: 70,
+    height: 70,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  typeCardTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: AppColors.gray800,
+    textAlign: 'center',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
     marginBottom: 24,
+    justifyContent: 'space-between',
+  },
+  backButton: {
+    padding: 8,
   },
   headerIconContainer: {
     width: 48,

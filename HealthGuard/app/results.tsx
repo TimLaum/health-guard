@@ -252,7 +252,7 @@ export default function ResultsScreen() {
 
         <TouchableOpacity
           style={styles.secondaryAction}
-          onPress={() => router.push('/(tabs)/capture')}
+          onPress={() => router.replace('/(tabs)/capture')}
         >
           <Ionicons name="scan-outline" size={20} color={AppColors.primary} />
           <Text style={styles.secondaryActionText}>New Scan</Text>

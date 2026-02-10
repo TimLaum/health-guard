@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="HealthGuard/assets/images/logo.png" alt="HealthGuard Vision Logo" width="120" />
+<img src="logo.png" alt="HealthGuard Vision Logo" width="120" />
 
 # HealthGuard Vision
 

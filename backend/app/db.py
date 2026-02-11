@@ -48,13 +48,10 @@ def init_db(app):
         history_validator = {
         "$jsonSchema": {
             "bsonType": "object",
-            "required": ["patient_id", "image", "type", "created_at"],
+            "required": ["patient_id", "type", "created_at"],
             "properties": {
                 "patient_id": {
                     "bsonType": "objectId"
-                },
-                "image": {
-                    "bsonType": "string"
                 },
                 "type": {
                     "enum": ["eye", "skin", "nails"]
@@ -73,12 +70,6 @@ def init_db(app):
     }
         mongo.db.create_collection("history", validator=history_validator)
         mongo.db.history.create_index([("patient_id", ASCENDING)])
-
-   
-
-    
-
-
 
 def create_user(email, password, firstname, lastname, sex):
     """
@@ -105,6 +96,7 @@ def get_all_users():
     Convertit les ObjectId en string pour le JSON.
     """
     users = list(mongo.db.users.find())
+    print(users)
     for user in users:
         user['_id'] = str(user['_id'])
         user.pop('password', None) 
@@ -150,17 +142,23 @@ def authenticate_user(email, password):
     return None
 
 
-def create_history_entry(patient_id, image_path, analysis_type, message, hb_level=None):
+def create_history_entry(patient_id, analysis_type, message, hb_level=None):
     """
     Ajoute une entrée dans l'historique d'un patient.
     patient_id doit être l'ID (string) de l'utilisateur.
     """
+    if isinstance(message, dict):
+        message = ", ".join([f"{key}: {value}" for key, value in message.items()])
+    elif isinstance(message, list):
+        message = ", ".join(message)
+
+    hb_level = str(hb_level) if hb_level else ""
+
     entry = {
         "patient_id": ObjectId(patient_id), 
-        "image": image_path,
         "type": analysis_type, 
         "message": message,
-        "hb_level": str(hb_level) if hb_level else None, 
+        "hb_level": hb_level, 
         "created_at": datetime.now(timezone.utc)
     }
     

@@ -7,7 +7,6 @@ def analyze_image(image_file, analysis_type, sex):
         raise ValueError("Invalid analysis type")
     
     result = analyzer.analyze(image_file, analysis_type, sexe=sex)
-    print("Result from analyzer:", result)
     diagnostic = []
     if analysis_type == "skin" and result :
         for r in result['predictions']:

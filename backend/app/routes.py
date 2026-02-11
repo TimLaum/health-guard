@@ -1,9 +1,10 @@
 from datetime import timedelta
-from app.db import authenticate_user, create_user, get_all_users, get_user_by_email
+from app.db import authenticate_user, create_history_entry, create_user, get_all_users, get_patient_history, get_user_by_email
 from flask import Blueprint, request, jsonify
 from .services import analyze_image
 import os
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from bson.binary import Binary  # Add this import
 
 main_bp = Blueprint('main', __name__)
 
@@ -60,6 +61,9 @@ def predict():
 
     try:
         result = analyze_image(file, analysis_type, user['sex'])
+        if not result:
+            return jsonify({"error": "Analyse échouée, résultat vide"}), 500
+        create_history_entry(user['_id'], analysis_type, result)
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -85,3 +89,14 @@ def authenticate():
 def get_users():
     users = get_all_users()
     return jsonify(users), 200
+
+@main_bp.route('/history', methods=['GET'])
+@jwt_required()
+def get_history():
+    current_user = get_jwt_identity()
+    user = get_user_by_email(current_user)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    history = get_patient_history(user['_id'])
+    return jsonify(history), 200

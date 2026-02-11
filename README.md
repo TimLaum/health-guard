@@ -30,7 +30,7 @@
 |------|--------|
 | 📱 Mobile App | [@Mohamedsellak](https://github.com/Mohamedsellak) |
 | 🖥️ Backend | TBD |
-| 🤖 AI/ML | TBD |
+| 🤖 AI/ML | https://github.com/0xCorentin |
 
 ---
 

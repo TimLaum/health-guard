@@ -11,7 +11,7 @@ def create_app():
     
     app.config["MONGO_URI"] = os.getenv("MONGO_URI", "mongodb://localhost:27017/healthguard")
     app.config["UPLOAD_FOLDER"] = "./uploads"
-    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "super-secret-key-a-changer")
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 
     init_db(app)
 

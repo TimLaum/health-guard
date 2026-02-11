@@ -1,4 +1,5 @@
 from datetime import timedelta
+from app.db import authenticate_user, create_user, get_all_users, get_user_by_email
 from flask import Blueprint, request, jsonify
 from .services import analyze_image
 import os
@@ -17,6 +18,27 @@ def re_auth():
     print(f"Utilisateur connecté : {current_user}")
     access_token = create_access_token(identity=current_user, expires_delta=timedelta(hours=24))
     return jsonify({"token": access_token}), 200
+
+@main_bp.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    firstname = data.get('firstname')
+    lastname = data.get('lastname')
+    sex = data.get('sex')
+    if not email or not password or not sex or not firstname or not lastname:
+        return jsonify({"error": "Missing required fields"}), 400
+    
+    if sex not in ['M', 'F']:
+        return jsonify({"error": "Invalid sex value, must be 'M' or 'F'"}), 400
+    
+    if get_user_by_email(email) :
+        return jsonify({"error": "Email already exists"}), 400
+    
+    create_user(email, password, firstname, lastname, sex)
+    return jsonify({"message": "User created successfully"}), 201
+
 
 @main_bp.route('/predict', methods=['POST'])
 @jwt_required()
@@ -39,15 +61,20 @@ def predict():
 @main_bp.route('/auth', methods=['POST'])
 def authenticate():
     data = request.get_json()
-    username = data.get('username')
+    email = data.get('email')
     password = data.get('password')
 
-
-
-    if username == 'admin' and password == 'password':
-        access_token = create_access_token(identity=username, expires_delta=timedelta(hours=24))
-        return jsonify({"token": access_token}), 200
-    else:
-        return jsonify({"error": "Invalid credentials"}), 401
+    if not email or not password:
+        return jsonify({"error": "Missing email or password"}), 400
+    if not authenticate_user(email, password):
+        return jsonify({"error": "Invalid email or password"}), 401
+    
+    access_token = create_access_token(identity=email, expires_delta=timedelta(hours=24))
+    return jsonify({"token": access_token}), 200
     
 
+@main_bp.route('/users', methods=['GET'])
+@jwt_required()
+def get_users():
+    users = get_all_users()
+    return jsonify(users), 200

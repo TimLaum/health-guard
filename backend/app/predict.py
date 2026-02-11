@@ -46,7 +46,7 @@ class MedicalAnalyzer:
         model_paths = {
             'nail': os.path.join(SCRIPT_DIR, "ml_models", "nail_anemia_model.tflite"),
             'skin': os.path.join(SCRIPT_DIR, "ml_models", "best_skin_disease_model.tflite"),
-            'eye': os.path.join(SCRIPT_DIR, "ml_models", "eye_disease_model.tflite")
+            'eye': os.path.join(SCRIPT_DIR, "ml_models", "eye_anemia_model.tflite")
         }
         
         model_path = model_paths[analysis_type]
@@ -65,21 +65,22 @@ class MedicalAnalyzer:
             'output_details': interpreter.get_output_details()
         }
         
-        print(f"✓ Modèle {analysis_type} chargé avec succès")
+        print(f"Modèle {analysis_type} chargé avec succès")
         return self.models[analysis_type]
     
-    def preprocess_image_nail(self, image_path: str) -> np.ndarray:
+    def preprocess_image_nail(self, image_path: str, img_size: int = 224) -> np.ndarray:
         """Prétraite une image d'ongle"""
-        image = cv2.imread(image_path)
-        if image is None:
-            raise ValueError(f"Impossible de lire l'image {image_path}")
+        img = Image.open(image_path)
         
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image, (224, 224))
-        image = image / 255.0
-        image = np.expand_dims(image, axis=0).astype(np.float32)
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
         
-        return image
+        img = img.resize((img_size, img_size), Image.Resampling.LANCZOS)
+        img_array = np.array(img)
+        img_array = img_array.astype('float32') / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+        
+        return img_array
     
     def preprocess_image_skin(self, image_path: str, img_size: int = 224) -> np.ndarray:
         """Prétraite une image de peau"""
@@ -95,18 +96,20 @@ class MedicalAnalyzer:
         
         return img_array
     
-    def preprocess_image_eye(self, image_path: str) -> np.ndarray:
+    def preprocess_image_eye(self, image_path: str, img_size: int = 224) -> np.ndarray:
         """Prétraite une image d'œil"""
-        image = cv2.imread(image_path)
-        if image is None:
-            raise ValueError(f"Impossible de lire l'image {image_path}")
+        img = Image.open(image_path)
         
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image, (224, 224))
-        image = image / 255.0
-        image = np.expand_dims(image, axis=0).astype(np.float32)
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
         
-        return image
+        img = img.resize((img_size, img_size), Image.Resampling.LANCZOS)
+        img_array = np.array(img)
+        img_array = img_array.astype('float32') / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
+        
+        return img_array
+        
     
     def analyze_nail(self, image_path: str, sexe: str) -> Dict:
         """
@@ -114,7 +117,7 @@ class MedicalAnalyzer:
         
         Args:
             image_path: Chemin vers l'image
-            sexe: 'homme' ou 'femme'
+            sexe: 'M' ou 'F'
         
         Returns:
             Dict avec les résultats de l'analyse
@@ -249,24 +252,24 @@ class MedicalAnalyzer:
         
         Args:
             hb_level: Niveau d'hémoglobine prédit en g/L
-            sexe: 'homme' ou 'femme'
+            sexe: 'M' ou 'F'
         
         Returns:
             Dict avec le diagnostic
         """
         # Seuils selon le sexe (en g/L)
-        if sexe.lower() == "homme":
+        if sexe.lower() == "m":
             seuil_anemie_severe = 80
             seuil_anemie_moderee = 100
             seuil_anemie_legere = 130
             seuil_normal_max = 170
-        elif sexe.lower() == "femme":
+        elif sexe.lower() == "f":
             seuil_anemie_severe = 80
             seuil_anemie_moderee = 100
             seuil_anemie_legere = 120
             seuil_normal_max = 160
         else:
-            raise ValueError(f"Sexe invalide: '{sexe}'. Attendu: 'homme' ou 'femme'.")
+            raise ValueError(f"Sexe invalide: '{sexe}'. Attendu: 'M' ou 'F'.")
         
         hb_rounded = round(hb_level, 1)
         
@@ -319,7 +322,7 @@ class MedicalAnalyzer:
             Dict avec les résultats de l'analyse
         """
         if analysis_type == 'nail':
-            sexe = kwargs.get('sexe', 'homme')
+            sexe = kwargs.get('sexe', 'M')
             return self.analyze_nail(image_path, sexe)
         elif analysis_type == 'skin':
             return self.analyze_skin(image_path)
@@ -351,7 +354,7 @@ def analyze_nail_image(image_path: str, sexe: str) -> Dict:
     
     Args:
         image_path: Chemin vers l'image de l'ongle
-        sexe: Sexe de la personne ('homme' ou 'femme')
+        sexe: Sexe de la personne ('M' ou 'F')
     
     Returns:
         Dict avec les résultats de l'analyse

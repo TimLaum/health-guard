@@ -44,15 +44,22 @@ def signup():
 @jwt_required()
 def predict():
     current_user = get_jwt_identity()
-    print(f"Utilisateur connecté : {current_user}")
+
+    user = get_user_by_email(current_user)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
     if 'image' not in request.files:
         return jsonify({"error": "Aucune image envoyée"}), 400
     
     file = request.files['image']
     analysis_type = request.form.get('type') 
 
+    if not analysis_type or analysis_type not in ['eye', 'skin', 'nail']:
+        return jsonify({"error": "Type d'analyse manquant ou invalide (eye, skin, nail)"}), 400
+
     try:
-        result = analyze_image(file, analysis_type)
+        result = analyze_image(file, analysis_type, user['sex'])
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

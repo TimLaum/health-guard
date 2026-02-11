@@ -13,7 +13,7 @@ def analyze_image(image_file, analysis_type, sex):
         for r in result['predictions']:
             print(r)
             diagnostic.append(r['disease'])
-            return diagnostic
+        return diagnostic
     return result
 
     

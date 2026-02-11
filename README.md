@@ -1,6 +1,6 @@
-<div align="center">
+qa<zx<zx<div align="center">
 
-<img src="HealthGuard/assets/images/logo.png" alt="HealthGuard Vision Logo" width="140" />
+<img src="logo.png" alt="HealthGuard Vision Logo" width="140" />
 
 # HealthGuard Vision
 

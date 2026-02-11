@@ -79,10 +79,15 @@ health-guard/
 │   ├── constants/           ← Colors, API config
 │   └── assets/              ← Logo & app icons
 │
-├── 🖥️ backend/              ← Flask REST API (coming soon)
-│   ├── routes/              ← Auth, Analysis endpoints
-│   ├── models/              ← Database models
-│   └── config/              ← JWT, DB, CORS config
+├── 🖥️ backend/              ← Flask REST API
+│   ├── app/                 ← Application code
+│   │   ├── ml_models/       ← TensorFlow Lite models
+│   │   ├── routes.py        ← API endpoints
+│   │   ├── services.py      ← Business logic
+│   │   ├── predict.py       ← ML prediction logic
+│   │   └── db.py            ← Database connection
+│   ├── run.py               ← Server entry point
+│   └── requirements.txt     ← Python dependencies
 │
 └── 🤖 ai-ml/                ← AI/ML Models (coming soon)
     ├── models/              ← TensorFlow / PyTorch models
@@ -160,9 +165,12 @@ health-guard/
 ### Prerequisites
 
 - **Node.js** ≥ 20 ([install via nvm](https://github.com/nvm-sh/nvm))
+- **Python** ≥ 3.8 (for backend)
 - **Expo Go** app on your phone ([Android](https://play.google.com/store/apps/details?id=host.exp.exponent) / [iOS](https://apps.apple.com/app/expo-go/id982107779))
 
 ### Installation
+
+#### Mobile App
 
 ```bash
 # Clone the repository
@@ -175,6 +183,23 @@ npm install
 
 # Start the development server
 npx expo start
+```
+
+#### Backend API
+
+```bash
+# Navigate to backend directory
+cd backend
+
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the Flask server
+python run.py
 ```
 
 ### Running on Device

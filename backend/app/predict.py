@@ -1,13 +1,12 @@
 """
 module de prédiction médical unifié pour Health Guard
 Gère l'analyse de 3 types d'images médicales :
-- Ongles : Détection d'anémie
+- Ongles : Détection d'anémie via analyse des ongles
 - Peau : Détection de maladies cutanées
-- Yeux : Détection de problèmes oculaires (à venir)
+- Yeux : Détection d'anémie via analyse de l'œil
 """
 
 import os
-import cv2
 import numpy as np
 import tensorflow as tf
 import json
@@ -68,8 +67,17 @@ class MedicalAnalyzer:
         print(f"Modèle {analysis_type} chargé avec succès")
         return self.models[analysis_type]
     
-    def preprocess_image_nail(self, image_path: str, img_size: int = 224) -> np.ndarray:
-        """Prétraite une image d'ongle"""
+    def preprocess_image(self, image_path: str, img_size: int = 224) -> np.ndarray:
+        """
+        Prétraite une image pour l'analyse (ongle, peau ou œil)
+        
+        Args:
+            image_path: Chemin vers l'image
+            img_size: Taille de l'image après redimensionnement
+        
+        Returns:
+            Tableau numpy de l'image prétraitée
+        """
         img = Image.open(image_path)
         
         if img.mode != 'RGB':
@@ -82,34 +90,44 @@ class MedicalAnalyzer:
         
         return img_array
     
-    def preprocess_image_skin(self, image_path: str, img_size: int = 224) -> np.ndarray:
-        """Prétraite une image de peau"""
-        img = Image.open(image_path)
+    def _analyze_anemia(self, image_path: str, sexe: str, analysis_type: str) -> Dict:
+        """
+        Fonction générique pour analyser l'anémie (ongle ou œil)
         
-        if img.mode != 'RGB':
-            img = img.convert('RGB')
+        Args:
+            image_path: Chemin vers l'image
+            sexe: 'M' ou 'F'
+            analysis_type: 'nail' ou 'eye'
         
-        img = img.resize((img_size, img_size), Image.Resampling.LANCZOS)
-        img_array = np.array(img)
-        img_array = img_array.astype('float32') / 255.0
-        img_array = np.expand_dims(img_array, axis=0)
-        
-        return img_array
-    
-    def preprocess_image_eye(self, image_path: str, img_size: int = 224) -> np.ndarray:
-        """Prétraite une image d'œil"""
-        img = Image.open(image_path)
-        
-        if img.mode != 'RGB':
-            img = img.convert('RGB')
-        
-        img = img.resize((img_size, img_size), Image.Resampling.LANCZOS)
-        img_array = np.array(img)
-        img_array = img_array.astype('float32') / 255.0
-        img_array = np.expand_dims(img_array, axis=0)
-        
-        return img_array
-        
+        Returns:
+            Dict avec les résultats de l'analyse
+        """
+        try:
+            # Charger le modèle
+            model = self.load_model(analysis_type)
+            
+            # Prétraiter l'image
+            image = self.preprocess_image(image_path)
+            
+            # Faire la prédiction
+            model['interpreter'].set_tensor(model['input_details'][0]['index'], image)
+            model['interpreter'].invoke()
+            prediction = model['interpreter'].get_tensor(model['output_details'][0]['index'])
+            hb_level = float(prediction[0][0])
+            
+            # Interpréter les résultats selon le sexe
+            result = self._interpret_anemia_result(hb_level, sexe)
+            result['analysis_type'] = analysis_type
+            result['success'] = True
+            
+            return result
+            
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e),
+                'analysis_type': analysis_type
+            }
     
     def analyze_nail(self, image_path: str, sexe: str) -> Dict:
         """
@@ -122,32 +140,7 @@ class MedicalAnalyzer:
         Returns:
             Dict avec les résultats de l'analyse
         """
-        try:
-            # Charger le modèle
-            model = self.load_model('nail')
-            
-            # Prétraiter l'image
-            image = self.preprocess_image_nail(image_path)
-            
-            # Faire la prédiction
-            model['interpreter'].set_tensor(model['input_details'][0]['index'], image)
-            model['interpreter'].invoke()
-            prediction = model['interpreter'].get_tensor(model['output_details'][0]['index'])
-            hb_level = float(prediction[0][0])
-            
-            # Interpréter les résultats selon le sexe
-            result = self._interpret_nail_result(hb_level, sexe)
-            result['analysis_type'] = 'nail'
-            result['success'] = True
-            
-            return result
-            
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e),
-                'analysis_type': 'nail'
-            }
+        return self._analyze_anemia(image_path, sexe, 'nail')
     
     def analyze_skin(self, image_path: str, top_k: int = 3) -> Dict:
         """
@@ -174,7 +167,7 @@ class MedicalAnalyzer:
             class_mapping = {int(k): v for k, v in class_mapping.items()}
             
             # Prétraiter l'image
-            image = self.preprocess_image_skin(image_path)
+            image = self.preprocess_image(image_path)
             
             # Faire la prédiction
             model['interpreter'].set_tensor(model['input_details'][0]['index'], image)
@@ -208,47 +201,22 @@ class MedicalAnalyzer:
                 'analysis_type': 'skin'
             }
     
-    def analyze_eye(self, image_path: str) -> Dict:
+    def analyze_eye(self, image_path: str, sexe: str) -> Dict:
         """
-        Analyse une image d'œil pour détecter des problèmes oculaires
+        Analyse une image d'œil pour détecter l'anémie
         
         Args:
             image_path: Chemin vers l'image
+            sexe: 'M' ou 'F'
         
         Returns:
             Dict avec les résultats de l'analyse
         """
-        try:
-            # Charger le modèle
-            model = self.load_model('eye')
-            
-            # Prétraiter l'image
-            image = self.preprocess_image_eye(image_path)
-            
-            # Faire la prédiction
-            model['interpreter'].set_tensor(model['input_details'][0]['index'], image)
-            model['interpreter'].invoke()
-            prediction = model['interpreter'].get_tensor(model['output_details'][0]['index'])
-            
-            # TODO: Interpréter les résultats selon votre modèle d'œil
-            # Ceci est un exemple, à adapter selon votre modèle
-            
-            return {
-                'success': True,
-                'analysis_type': 'eye',
-                'message': 'Analyse d\'œil en cours de développement'
-            }
-            
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e),
-                'analysis_type': 'eye'
-            }
+        return self._analyze_anemia(image_path, sexe, 'eye')
     
-    def _interpret_nail_result(self, hb_level: float, sexe: str) -> Dict:
+    def _interpret_anemia_result(self, hb_level: float, sexe: str) -> Dict:
         """
-        Interprète le niveau d'hémoglobine selon le sexe
+        Interprète le niveau d'hémoglobine selon le sexe (ongle ou œil)
         
         Args:
             hb_level: Niveau d'hémoglobine prédit en g/L
@@ -316,7 +284,7 @@ class MedicalAnalyzer:
         Args:
             image_path: Chemin vers l'image
             analysis_type: Type d'analyse ('nail', 'skin', 'eye')
-            **kwargs: Arguments additionnels (ex: sexe pour nail)
+            **kwargs: Arguments additionnels (ex: sexe pour nail et eye)
         
         Returns:
             Dict avec les résultats de l'analyse
@@ -327,7 +295,8 @@ class MedicalAnalyzer:
         elif analysis_type == 'skin':
             return self.analyze_skin(image_path)
         elif analysis_type == 'eye':
-            return self.analyze_eye(image_path)
+            sexe = kwargs.get('sexe', 'M')
+            return self.analyze_eye(image_path, sexe)
         else:
             return {
                 'success': False,
@@ -361,3 +330,18 @@ def analyze_nail_image(image_path: str, sexe: str) -> Dict:
     """
     analyzer = get_analyzer()
     return analyzer.analyze_nail(image_path, sexe)
+
+
+def analyze_eye_image(image_path: str, sexe: str) -> Dict:
+    """
+    Fonction legacy pour l'analyse de l'œil (compatibilité)
+    
+    Args:
+        image_path: Chemin vers l'image de l'œil
+        sexe: Sexe de la personne ('M' ou 'F')
+    
+    Returns:
+        Dict avec les résultats de l'analyse
+    """
+    analyzer = get_analyzer()
+    return analyzer.analyze_eye(image_path, sexe)

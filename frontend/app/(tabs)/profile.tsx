@@ -3,7 +3,7 @@
  * User settings and account management
  */
 
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -11,12 +11,12 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AppColors } from '@/constants/colors';
-import { useAuth } from '@/contexts/auth-context';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppColors } from "@/constants/colors";
+import { useAuth } from "@/contexts/auth-context";
 
 interface MenuItem {
   icon: keyof typeof Ionicons.glyphMap;
@@ -32,21 +32,21 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
 
-  const displayName = user ? `${user.first_name} ${user.last_name}` : 'User';
-  const displayEmail = user?.email || '';
+  const displayName = user ? `${user.firstname} ${user.lastname}` : "User";
+  const displayEmail = user?.email || "";
   const initials = user
-    ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase()
-    : 'U';
+    ? `${user.firstname[0]}${user.lastname[0]}`.toUpperCase()
+    : "U";
 
   function handleLogout() {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+      { text: "Cancel", style: "cancel" },
       {
-        text: 'Sign Out',
-        style: 'destructive',
+        text: "Sign Out",
+        style: "destructive",
         onPress: async () => {
           await logout();
-          router.replace('/(auth)/login');
+          router.replace("/(auth)/login");
         },
       },
     ]);
@@ -54,76 +54,81 @@ export default function ProfileScreen() {
 
   const menuSections: { title: string; items: MenuItem[] }[] = [
     {
-      title: 'Account',
+      title: "Account",
       items: [
         {
-          icon: 'person-outline',
-          label: 'Edit Profile',
-          subtitle: 'Name, email, photo',
+          icon: "person-outline",
+          label: "Edit Profile",
+          subtitle: "Name, email, photo",
           onPress: () => {},
         },
         {
-          icon: 'lock-closed-outline',
-          label: 'Change Password',
-          subtitle: 'Update your password',
+          icon: "lock-closed-outline",
+          label: "Change Password",
+          subtitle: "Update your password",
           onPress: () => {},
         },
         {
-          icon: 'shield-outline',
-          label: 'Privacy & Security',
-          subtitle: 'Data protection settings',
-          onPress: () => router.push('/(legal)/privacy'),
+          icon: "shield-outline",
+          label: "Privacy & Security",
+          subtitle: "Data protection settings",
+          onPress: () => router.push("/(legal)/privacy"),
         },
       ],
     },
     {
-      title: 'Health Data',
+      title: "Health Data",
       items: [
         {
-          icon: 'download-outline',
-          label: 'Export Data',
-          subtitle: 'Download your health records',
-          onPress: () => Alert.alert('Export', 'Your data export will be ready shortly'),
+          icon: "download-outline",
+          label: "Export Data",
+          subtitle: "Download your health records",
+          onPress: () =>
+            Alert.alert("Export", "Your data export will be ready shortly"),
         },
         {
-          icon: 'trash-outline',
-          label: 'Delete All Data',
-          subtitle: 'Remove all scan history',
+          icon: "trash-outline",
+          label: "Delete All Data",
+          subtitle: "Remove all scan history",
           color: AppColors.danger,
           danger: true,
           onPress: () =>
-            Alert.alert('Delete All Data', 'This action cannot be undone. Continue?', [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Delete', style: 'destructive', onPress: () => {} },
-            ]),
+            Alert.alert(
+              "Delete All Data",
+              "This action cannot be undone. Continue?",
+              [
+                { text: "Cancel", style: "cancel" },
+                { text: "Delete", style: "destructive", onPress: () => {} },
+              ],
+            ),
         },
       ],
     },
     {
-      title: 'App',
+      title: "App",
       items: [
         {
-          icon: 'notifications-outline',
-          label: 'Notifications',
-          subtitle: 'Manage notification preferences',
+          icon: "notifications-outline",
+          label: "Notifications",
+          subtitle: "Manage notification preferences",
           onPress: () => {},
         },
         {
-          icon: 'book-outline',
-          label: 'App Guide',
-          subtitle: 'How to use HealthGuard',
-          onPress: () => router.push('/guide'),
+          icon: "book-outline",
+          label: "App Guide",
+          subtitle: "How to use HealthGuard",
+          onPress: () => router.push("/guide"),
         },
         {
-          icon: 'document-text-outline',
-          label: 'Terms of Service',
-          subtitle: 'Terms & conditions',
-          onPress: () => router.push('/(legal)/terms'),
+          icon: "document-text-outline",
+          label: "Terms of Service",
+          subtitle: "Terms & conditions",
+          onPress: () => router.push("/(legal)/terms"),
         },
         {
-          icon: 'information-circle-outline',
-          label: 'About HealthGuard',
-          subtitle: 'Version 1.0.0',
+          icon: "information-circle-outline",
+          label: "About HealthGuard",
+          subtitle: "Version 1.0.0",
           onPress: () => {},
         },
       ],
@@ -156,7 +161,9 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.stat}>
-            <Text style={[styles.statNumber, { color: AppColors.success }]}>Good</Text>
+            <Text style={[styles.statNumber, { color: AppColors.success }]}>
+              Good
+            </Text>
             <Text style={styles.statLabel}>Status</Text>
           </View>
         </View>
@@ -180,7 +187,11 @@ export default function ProfileScreen() {
                 <View
                   style={[
                     styles.menuIcon,
-                    { backgroundColor: item.danger ? '#FEF2F2' : AppColors.primaryBg },
+                    {
+                      backgroundColor: item.danger
+                        ? "#FEF2F2"
+                        : AppColors.primaryBg,
+                    },
                   ]}
                 >
                   <Ionicons
@@ -190,14 +201,23 @@ export default function ProfileScreen() {
                   />
                 </View>
                 <View style={styles.menuTextContainer}>
-                  <Text style={[styles.menuLabel, item.danger && { color: AppColors.danger }]}>
+                  <Text
+                    style={[
+                      styles.menuLabel,
+                      item.danger && { color: AppColors.danger },
+                    ]}
+                  >
                     {item.label}
                   </Text>
                   {item.subtitle && (
                     <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
                   )}
                 </View>
-                <Ionicons name="chevron-forward" size={18} color={AppColors.gray300} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color={AppColors.gray300}
+                />
               </TouchableOpacity>
             ))}
           </View>
@@ -224,12 +244,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   profileHeader: {
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: AppColors.white,
     borderRadius: 24,
     padding: 24,
     marginBottom: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
@@ -240,18 +260,18 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 24,
     backgroundColor: AppColors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 12,
   },
   avatarText: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.white,
   },
   name: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
   },
   email: {
@@ -260,21 +280,21 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 20,
     paddingTop: 20,
     borderTopWidth: 1,
     borderTopColor: AppColors.gray100,
-    width: '100%',
+    width: "100%",
   },
   stat: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   statNumber: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
   },
   statLabel: {
@@ -292,26 +312,26 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.gray500,
     marginBottom: 8,
     marginLeft: 4,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   sectionCard: {
     backgroundColor: AppColors.white,
     borderRadius: 18,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 1,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     gap: 14,
   },
@@ -323,15 +343,15 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   menuTextContainer: {
     flex: 1,
   },
   menuLabel: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.gray900,
   },
   menuSubtitle: {
@@ -340,20 +360,20 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     backgroundColor: AppColors.white,
     paddingVertical: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#FEE2E2',
+    borderColor: "#FEE2E2",
     marginTop: 4,
   },
   logoutText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.danger,
   },
 });

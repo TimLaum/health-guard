@@ -2,7 +2,7 @@
  * Sign Up Screen - HealthGuard Vision
  */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -15,48 +15,61 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
-} from 'react-native';
-import { Link, useRouter } from 'expo-router';
-import { Image } from 'expo-image';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@/contexts/auth-context';
-import { AppColors } from '@/constants/colors';
+} from "react-native";
+import { Link, useRouter } from "expo-router";
+import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "@/contexts/auth-context";
+import { AppColors } from "@/constants/colors";
 
 export default function SignupScreen() {
   const router = useRouter();
   const { register } = useAuth();
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [sex, setSex] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [sex, setSex] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSignup() {
-    if (!firstName.trim() || !lastName.trim() || !sex.trim() || !email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please fill in all fields');
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !sex.trim() ||
+      !email.trim() ||
+      !password.trim()
+    ) {
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      Alert.alert("Error", "Password must be at least 6 characters");
       return;
     }
 
     setIsLoading(true);
+
     try {
-      await register(firstName.trim(), lastName.trim(), sex.trim(), email.trim(), password);
-      router.replace('/(tabs)');
+      await register(
+        firstName.trim(),
+        lastName.trim(),
+        sex.trim(),
+        email.trim(),
+        password,
+      );
+      router.replace("/(tabs)");
     } catch (error: any) {
-      Alert.alert('Registration Failed', error.message || 'Could not create account');
+      Alert.alert("Signup Failed", error.message || "Could not create account");
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +78,7 @@ export default function SignupScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -75,7 +88,7 @@ export default function SignupScreen() {
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <Image
-              source={require('@/assets/images/logo.png')}
+              source={require("@/assets/images/logo.png")}
               style={styles.logoImage}
               contentFit="contain"
             />
@@ -86,11 +99,18 @@ export default function SignupScreen() {
         {/* Form */}
         <View style={styles.form}>
           <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Start monitoring your health today</Text>
+          <Text style={styles.subtitle}>
+            Start monitoring your health today
+          </Text>
 
           {/* First Name Input */}
           <View style={styles.inputContainer}>
-            <Ionicons name="person-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+            <Ionicons
+              name="person-outline"
+              size={20}
+              color={AppColors.gray400}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="First Name"
@@ -103,7 +123,12 @@ export default function SignupScreen() {
 
           {/* Last Name Input */}
           <View style={styles.inputContainer}>
-            <Ionicons name="person-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+            <Ionicons
+              name="person-outline"
+              size={20}
+              color={AppColors.gray400}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Last Name"
@@ -117,35 +142,75 @@ export default function SignupScreen() {
           {/* Sex Selection */}
           <View style={styles.sexContainer}>
             <View style={styles.sexLabelRow}>
-              <Ionicons name="male-female-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+              <Ionicons
+                name="male-female-outline"
+                size={20}
+                color={AppColors.gray400}
+                style={styles.inputIcon}
+              />
               <Text style={styles.sexLabel}>Sex</Text>
             </View>
             <View style={styles.radioGroup}>
-              <Pressable 
-                style={[styles.radioOption, sex === 'M' && styles.radioOptionSelected]}
-                onPress={() => setSex('M')}
+              <Pressable
+                style={[
+                  styles.radioOption,
+                  sex === "M" && styles.radioOptionSelected,
+                ]}
+                onPress={() => setSex("M")}
               >
-                <View style={[styles.radioButton, sex === 'M' && styles.radioButtonSelected]}>
-                  {sex === 'M' && <View style={styles.radioButtonInner} />}
+                <View
+                  style={[
+                    styles.radioButton,
+                    sex === "M" && styles.radioButtonSelected,
+                  ]}
+                >
+                  {sex === "M" && <View style={styles.radioButtonInner} />}
                 </View>
-                <Text style={[styles.radioText, sex === 'M' && styles.radioTextSelected]}>Male</Text>
+                <Text
+                  style={[
+                    styles.radioText,
+                    sex === "M" && styles.radioTextSelected,
+                  ]}
+                >
+                  Male
+                </Text>
               </Pressable>
-              
-              <Pressable 
-                style={[styles.radioOption, sex === 'F' && styles.radioOptionSelected]}
-                onPress={() => setSex('F')}
+
+              <Pressable
+                style={[
+                  styles.radioOption,
+                  sex === "F" && styles.radioOptionSelected,
+                ]}
+                onPress={() => setSex("F")}
               >
-                <View style={[styles.radioButton, sex === 'F' && styles.radioButtonSelected]}>
-                  {sex === 'F' && <View style={styles.radioButtonInner} />}
+                <View
+                  style={[
+                    styles.radioButton,
+                    sex === "F" && styles.radioButtonSelected,
+                  ]}
+                >
+                  {sex === "F" && <View style={styles.radioButtonInner} />}
                 </View>
-                <Text style={[styles.radioText, sex === 'F' && styles.radioTextSelected]}>Female</Text>
+                <Text
+                  style={[
+                    styles.radioText,
+                    sex === "F" && styles.radioTextSelected,
+                  ]}
+                >
+                  Female
+                </Text>
               </Pressable>
             </View>
           </View>
 
           {/* Email Input */}
           <View style={styles.inputContainer}>
-            <Ionicons name="mail-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+            <Ionicons
+              name="mail-outline"
+              size={20}
+              color={AppColors.gray400}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Email address"
@@ -160,7 +225,12 @@ export default function SignupScreen() {
 
           {/* Password Input */}
           <View style={styles.inputContainer}>
-            <Ionicons name="lock-closed-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+            <Ionicons
+              name="lock-closed-outline"
+              size={20}
+              color={AppColors.gray400}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Password (min. 6 characters)"
@@ -170,9 +240,12 @@ export default function SignupScreen() {
               secureTextEntry={!showPassword}
               autoComplete="new-password"
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+              style={styles.eyeIcon}
+            >
               <Ionicons
-                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
                 size={20}
                 color={AppColors.gray400}
               />
@@ -181,7 +254,12 @@ export default function SignupScreen() {
 
           {/* Confirm Password Input */}
           <View style={styles.inputContainer}>
-            <Ionicons name="lock-closed-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+            <Ionicons
+              name="lock-closed-outline"
+              size={20}
+              color={AppColors.gray400}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
               placeholder="Confirm Password"
@@ -243,11 +321,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 24,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   logoContainer: {
@@ -255,15 +333,15 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 22,
     backgroundColor: AppColors.primaryBg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 12,
     shadowColor: AppColors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 6,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   logoImage: {
     width: 64,
@@ -271,14 +349,14 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.primary,
   },
   form: {
     backgroundColor: AppColors.white,
     borderRadius: 24,
     padding: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -286,7 +364,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 4,
   },
@@ -296,8 +374,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: AppColors.inputBg,
     borderRadius: 14,
     paddingHorizontal: 16,
@@ -321,23 +399,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sexLabelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
   },
   sexLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.gray900,
   },
   radioGroup: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 16,
   },
   radioOption: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 14,
     paddingVertical: 12,
     backgroundColor: AppColors.inputBg,
@@ -355,8 +433,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: AppColors.gray300,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 8,
   },
   radioButtonSelected: {
@@ -371,11 +449,11 @@ const styles = StyleSheet.create({
   radioText: {
     fontSize: 15,
     color: AppColors.gray700,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   radioTextSelected: {
     color: AppColors.primary,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   terms: {
     fontSize: 13,
@@ -383,23 +461,23 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   termsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
     marginBottom: 20,
   },
   termsLink: {
     fontSize: 13,
     color: AppColors.primary,
-    fontWeight: '600',
+    fontWeight: "600",
     lineHeight: 18,
   },
   button: {
     backgroundColor: AppColors.primary,
     borderRadius: 14,
     height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: AppColors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -412,11 +490,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: AppColors.white,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 24,
   },
   footerText: {
@@ -426,6 +504,6 @@ const styles = StyleSheet.create({
   footerLink: {
     fontSize: 15,
     color: AppColors.primary,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

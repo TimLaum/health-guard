@@ -3,7 +3,7 @@
  * Shows past analysis results
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,61 +11,43 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AppColors } from '@/constants/colors';
-import { AnalysisRecord, getAnalysisHistory } from '@/services/api';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppColors } from "@/constants/colors";
+import { HistoryRecord, getAnalysisHistory } from "@/services/api";
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
-const RESULT_TYPE_LABELS: Record<string, string> = {
-  diabetes: 'Diabetes',
-  anemia: 'Anemia',
-  deficiency: 'Deficiency',
-};
-
-function deriveSeverity(probability: number): 'low' | 'moderate' | 'high' {
-  if (probability >= 0.7) return 'high';
-  if (probability >= 0.4) return 'moderate';
-  return 'low';
-}
-
 const TYPE_CONFIG = {
   eye: {
-    icon: 'eye-outline' as const,
-    label: 'Eye Scan',
+    icon: "eye-outline" as const,
+    label: "Eye Scan",
     color: AppColors.eyeScan,
-    bgColor: '#F3E8FF',
+    bgColor: "#F3E8FF",
   },
   skin: {
-    icon: 'body-outline' as const,
-    label: 'Skin Scan',
+    icon: "body-outline" as const,
+    label: "Skin Scan",
     color: AppColors.skinScan,
-    bgColor: '#FFF7ED',
+    bgColor: "#FFF7ED",
   },
   nail: {
-    icon: 'hand-left-outline' as const,
-    label: 'Nail Scan',
+    icon: "hand-left-outline" as const,
+    label: "Nail Scan",
     color: AppColors.nailScan,
-    bgColor: '#FDF2F8',
+    bgColor: "#FDF2F8",
   },
 };
 
-const SEVERITY_CONFIG = {
-  low: { label: 'Normal', color: AppColors.success, bg: '#ECFDF5' },
-  moderate: { label: 'Moderate', color: AppColors.warning, bg: '#FFFBEB' },
-  high: { label: 'High Risk', color: AppColors.danger, bg: '#FEF2F2' },
-};
-
-type FilterType = 'all' | 'eye' | 'skin' | 'nail';
+type FilterType = "all" | "eye" | "skin" | "nail";
 
 export default function HistoryScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [filter, setFilter] = useState<FilterType>('all');
-  const [history, setHistory] = useState<AnalysisRecord[]>([]);
+  const [filter, setFilter] = useState<FilterType>("all");
+  const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -85,58 +67,57 @@ export default function HistoryScreen() {
     }
   }
 
-  const filteredHistory = filter === 'all'
-    ? history
-    : history.filter(item => item.image_type === filter);
+  const filteredHistory =
+    filter === "all" ? history : history.filter((item) => item.type === filter);
 
   function formatDate(dateStr: string) {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   }
 
-  function renderItem({ item }: { item: AnalysisRecord }) {
-    const typeConfig = TYPE_CONFIG[item.image_type];
-    const { type: resultType, probability } = item.result;
-    const severity = deriveSeverity(probability);
-    const severityConfig = SEVERITY_CONFIG[severity];
-    const label = RESULT_TYPE_LABELS[resultType] || resultType;
+  function renderItem({ item }: { item: HistoryRecord }) {
+    const typeConfig = TYPE_CONFIG[item.type];
 
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() =>
           router.push({
-            pathname: '/results',
-            params: { resultId: item._id, type: item.image_type },
+            pathname: "/results",
+            params: { historyData: JSON.stringify(item), type: item.type },
           })
         }
         activeOpacity={0.7}
       >
         <View style={styles.cardLeft}>
-          <View style={[styles.typeIcon, { backgroundColor: typeConfig.bgColor }]}>
-            <Ionicons name={typeConfig.icon} size={22} color={typeConfig.color} />
+          <View
+            style={[styles.typeIcon, { backgroundColor: typeConfig.bgColor }]}
+          >
+            <Ionicons
+              name={typeConfig.icon}
+              size={22}
+              color={typeConfig.color}
+            />
           </View>
         </View>
 
         <View style={styles.cardCenter}>
           <Text style={styles.cardType}>{typeConfig.label}</Text>
           <Text style={styles.cardCondition} numberOfLines={1}>
-            {label}: {Math.round(probability * 100)}% probability
+            {item.message}
           </Text>
-          <Text style={styles.cardDate}>{formatDate(item.uploaded_at)}</Text>
+          <Text style={styles.cardDate}>{formatDate(item.created_at)}</Text>
         </View>
 
-        <View style={styles.cardRight}>
-          <View style={[styles.severityBadge, { backgroundColor: severityConfig.bg }]}>
-            <Text style={[styles.severityText, { color: severityConfig.color }]}>
-              {severityConfig.label}
-            </Text>
+        {item.hb_level ? (
+          <View style={styles.cardRight}>
+            <Text style={styles.hbBadgeText}>{item.hb_level}</Text>
           </View>
-        </View>
+        ) : null}
       </TouchableOpacity>
     );
   }
@@ -144,14 +125,18 @@ export default function HistoryScreen() {
   function renderEmpty() {
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="document-text-outline" size={64} color={AppColors.gray300} />
+        <Ionicons
+          name="document-text-outline"
+          size={64}
+          color={AppColors.gray300}
+        />
         <Text style={styles.emptyTitle}>No scans yet</Text>
         <Text style={styles.emptySubtitle}>
           Your analysis history will appear here after your first scan
         </Text>
         <TouchableOpacity
           style={styles.emptyButton}
-          onPress={() => router.push('/(tabs)/capture')}
+          onPress={() => router.push("/(tabs)/capture")}
         >
           <Text style={styles.emptyButtonText}>Start Your First Scan</Text>
         </TouchableOpacity>
@@ -169,14 +154,19 @@ export default function HistoryScreen() {
 
       {/* Filters */}
       <View style={styles.filters}>
-        {(['all', 'eye', 'skin', 'nail'] as FilterType[]).map((f) => (
+        {(["all", "eye", "skin", "nail"] as FilterType[]).map((f) => (
           <TouchableOpacity
             key={f}
             style={[styles.filterChip, filter === f && styles.filterChipActive]}
             onPress={() => setFilter(f)}
           >
-            <Text style={[styles.filterText, filter === f && styles.filterTextActive]}>
-              {f === 'all' ? 'All' : TYPE_CONFIG[f].label}
+            <Text
+              style={[
+                styles.filterText,
+                filter === f && styles.filterTextActive,
+              ]}
+            >
+              {f === "all" ? "All" : TYPE_CONFIG[f].label}
             </Text>
           </TouchableOpacity>
         ))}
@@ -212,7 +202,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
   },
   subtitle: {
@@ -221,7 +211,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   filters: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     marginBottom: 16,
   },
@@ -239,7 +229,7 @@ const styles = StyleSheet.create({
   },
   filterText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.gray600,
   },
   filterTextActive: {
@@ -250,12 +240,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: AppColors.white,
     borderRadius: 16,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 6,
@@ -268,15 +258,15 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   cardCenter: {
     flex: 1,
   },
   cardType: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
   },
   cardCondition: {
@@ -290,34 +280,30 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   cardRight: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     gap: 6,
   },
-  severityBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
-  },
-  severityText: {
-    fontSize: 11,
-    fontWeight: '700',
+  hbBadgeText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: AppColors.primary,
   },
   emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingTop: 60,
     paddingHorizontal: 20,
   },
   emptyTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray700,
     marginTop: 16,
   },
   emptySubtitle: {
     fontSize: 14,
     color: AppColors.gray400,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 8,
     lineHeight: 20,
   },
@@ -331,6 +317,6 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     color: AppColors.white,
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

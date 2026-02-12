@@ -12,6 +12,7 @@ def init_db(app):
     if mongo.db.command("ping"):
         print("MongoDB connecte avec succes")
 
+
     if "users" not in mongo.db.list_collection_names():
          user_validator = {
         "$jsonSchema": {
@@ -54,7 +55,7 @@ def init_db(app):
                     "bsonType": "objectId"
                 },
                 "type": {
-                    "enum": ["eye", "skin", "nails"]
+                    "enum": ["eye", "skin", "nail"]
                 },
                 "message": {
                     "bsonType": "string"

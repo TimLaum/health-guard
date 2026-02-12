@@ -3,7 +3,7 @@
  * Manages authentication state across the app
  */
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   loginApi,
   registerApi,
@@ -11,8 +11,9 @@ import {
   getToken,
   setToken,
   removeToken,
+  reAuthApi,
   type User,
-} from '@/services/api';
+} from "@/services/api";
 
 interface AuthState {
   user: User | null;
@@ -22,7 +23,13 @@ interface AuthState {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (firstName: string, lastName: string, sex: string, email: string, password: string) => Promise<void>;
+  register: (
+    firstname: string,
+    lastname: string,
+    sex: string,
+    email: string,
+    password: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -44,6 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const token = await getToken();
       if (token) {
+        // Refresh the token and fetch latest profile
+        const { token: newToken } = await reAuthApi();
+        await setToken(newToken);
         const user = await getProfileApi();
         setState({ user, isLoading: false, isAuthenticated: true });
       } else {
@@ -57,14 +67,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function login(email: string, password: string) {
-    const { token, user } = await loginApi(email, password);
+    // Backend POST /auth returns { token } only — fetch profile separately
+    const { token } = await loginApi(email, password);
     await setToken(token);
+    const user = await getProfileApi();
     setState({ user, isLoading: false, isAuthenticated: true });
   }
 
-  async function register(firstName: string, lastName: string, sex: string, email: string, password: string) {
-    const { token, user } = await registerApi(firstName, lastName, sex, email, password);
+  async function register(
+    firstname: string,
+    lastname: string,
+    sex: string,
+    email: string,
+    password: string,
+  ) {
+    // Backend POST /signup returns { message } — auto-login after signup
+    await registerApi(firstname, lastname, sex, email, password);
+    const { token } = await loginApi(email, password);
     await setToken(token);
+    const user = await getProfileApi();
     setState({ user, isLoading: false, isAuthenticated: true });
   }
 
@@ -83,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

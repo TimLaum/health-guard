@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: healthguard-db
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: healthguard
+
+  backend:
+    build: ./backend
+    container_name: healthguard-api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/healthguard
+      JWT_SECRET_KEY: 8X4lRJK0P2ashDMC73OwYRoWvEqmVgH8UFIkxDhh6Io=
+      DEBUG: "true"
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    container_name: healthguard-front
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  mongo-data:

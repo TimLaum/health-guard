@@ -33,47 +33,47 @@ interface ScanOption {
 const SCAN_OPTIONS: ScanOption[] = [
   {
     id: "eye",
-    title: "Eye Scan",
-    subtitle: "Retinal analysis",
+    title: "Scan Oculaire",
+    subtitle: "Analyse rétinienne",
     icon: "eye-outline",
     color: AppColors.eyeScan,
     bgColor: "#F3E8FF",
-    detects: "Diabetes indicators",
+    detects: "Indicateurs de diabète",
   },
   {
     id: "skin",
-    title: "Skin Scan",
-    subtitle: "Dermal analysis",
+    title: "Scan Cutané",
+    subtitle: "Analyse dermique",
     icon: "body-outline",
     color: AppColors.skinScan,
     bgColor: "#FFF7ED",
-    detects: "Nutritional deficiencies",
+    detects: "Carences nutritionnelles",
   },
   {
     id: "nail",
-    title: "Nail Scan",
-    subtitle: "Nail bed analysis",
+    title: "Scan Ongles",
+    subtitle: "Analyse du lit ungual",
     icon: "hand-left-outline",
     color: AppColors.nailScan,
     bgColor: "#FDF2F8",
-    detects: "Anemia signs",
+    detects: "Signes d'anémie",
   },
 ];
 
 const HEALTH_TIPS = [
   {
     icon: "water-outline" as const,
-    text: "Stay hydrated — drink 8 glasses daily",
+    text: "Restez hydraté — buvez 8 verres d'eau par jour",
     color: AppColors.info,
   },
   {
     icon: "sunny-outline" as const,
-    text: "Get 15 min of sunlight for Vitamin D",
+    text: "Exposez-vous 15 min au soleil pour la vitamine D",
     color: AppColors.warning,
   },
   {
     icon: "nutrition-outline" as const,
-    text: "Eat iron-rich foods to prevent anemia",
+    text: "Mangez des aliments riches en fer pour prévenir l'anémie",
     color: AppColors.success,
   },
 ];
@@ -98,8 +98,10 @@ export default function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hello, {firstName} 👋</Text>
-          <Text style={styles.headerSubtitle}>How are you feeling today?</Text>
+          <Text style={styles.greeting}>Bonjour, {firstName} 👋</Text>
+          <Text style={styles.headerSubtitle}>
+            Comment vous sentez-vous aujourd'hui ?
+          </Text>
         </View>
         <TouchableOpacity style={styles.notificationBtn}>
           <Ionicons
@@ -114,27 +116,27 @@ export default function HomeScreen() {
       <View style={styles.statusCard}>
         <View style={styles.statusHeader}>
           <Ionicons name="shield-checkmark" size={24} color={AppColors.white} />
-          <Text style={styles.statusTitle}>Health Status</Text>
+          <Text style={styles.statusTitle}>État de santé</Text>
         </View>
         <Text style={styles.statusText}>
-          Take a scan to get your health insights
+          Faites un scan pour obtenir vos indicateurs de santé
         </Text>
         <View style={styles.statusBadge}>
-          <Text style={styles.statusBadgeText}>No recent scans</Text>
+          <Text style={styles.statusBadgeText}>Aucun scan récent</Text>
         </View>
       </View>
 
       {/* Scan Options */}
-      <Text style={styles.sectionTitle}>Start a Scan</Text>
+      <Text style={styles.sectionTitle}>Lancer un scan</Text>
       <Text style={styles.sectionSubtitle}>
-        Choose what you'd like to analyze
+        Choisissez ce que vous souhaitez analyser
       </Text>
 
       <View style={styles.scanGrid}>
         {SCAN_OPTIONS.map((option) => (
           <TouchableOpacity
             key={option.id}
-            style={styles.scanCard}
+            style={[styles.scanCard, { borderLeftColor: option.color }]}
             onPress={() => handleScan(option.id)}
             activeOpacity={0.7}
           >
@@ -144,27 +146,34 @@ export default function HomeScreen() {
                 { backgroundColor: option.bgColor },
               ]}
             >
-              <Ionicons name={option.icon} size={32} color={option.color} />
+              <Ionicons name={option.icon} size={28} color={option.color} />
             </View>
-            <Text style={styles.scanTitle}>{option.title}</Text>
-            <Text style={styles.scanSubtitle}>{option.subtitle}</Text>
-            <View
-              style={[
-                styles.scanDetectsBadge,
-                { backgroundColor: option.bgColor },
-              ]}
-            >
-              <Text style={[styles.scanDetectsText, { color: option.color }]}>
-                {option.detects}
-              </Text>
+            <View style={styles.scanTextContainer}>
+              <Text style={styles.scanTitle}>{option.title}</Text>
+              <Text style={styles.scanSubtitle}>{option.subtitle}</Text>
+              <View
+                style={[
+                  styles.scanDetectsBadge,
+                  { backgroundColor: option.bgColor },
+                ]}
+              >
+                <Text style={[styles.scanDetectsText, { color: option.color }]}>
+                  {option.detects}
+                </Text>
+              </View>
             </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={AppColors.gray300}
+            />
           </TouchableOpacity>
         ))}
       </View>
 
       {/* Health Tips */}
       <Text style={[styles.sectionTitle, { marginTop: 8 }]}>
-        Daily Health Tips
+        Conseils santé du jour
       </Text>
 
       <View style={styles.tipsContainer}>
@@ -191,8 +200,8 @@ export default function HomeScreen() {
           color={AppColors.gray400}
         />
         <Text style={styles.disclaimerText}>
-          HealthGuard provides screening assistance only. Always consult a
-          healthcare professional for diagnosis.
+          HealthGuard fournit une aide au dépistage uniquement. Consultez
+          toujours un professionnel de santé pour un diagnostic.
         </Text>
       </View>
     </ScrollView>
@@ -288,15 +297,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   scanGrid: {
-    flexDirection: "row",
     gap: 12,
   },
   scanCard: {
-    flex: 1,
-    backgroundColor: AppColors.white,
-    borderRadius: 18,
-    padding: 14,
+    flexDirection: "row",
     alignItems: "center",
+    backgroundColor: AppColors.white,
+    borderRadius: 16,
+    padding: 16,
+    gap: 14,
+    borderLeftWidth: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -304,33 +314,35 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   scanIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: 52,
+    height: 52,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+  },
+  scanTextContainer: {
+    flex: 1,
   },
   scanTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 2,
   },
   scanSubtitle: {
-    fontSize: 11,
+    fontSize: 13,
     color: AppColors.gray400,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   scanDetectsBadge: {
-    paddingHorizontal: 8,
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
   scanDetectsText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: "600",
-    textAlign: "center",
   },
   tipsContainer: {
     marginTop: 12,

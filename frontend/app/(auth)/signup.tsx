@@ -43,17 +43,20 @@ export default function SignupScreen() {
       !email.trim() ||
       !password.trim()
     ) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert("Erreur", "Veuillez remplir tous les champs");
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
+      Alert.alert("Erreur", "Les mots de passe ne correspondent pas");
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
+      Alert.alert(
+        "Erreur",
+        "Le mot de passe doit contenir au moins 6 caractères",
+      );
       return;
     }
 
@@ -69,7 +72,10 @@ export default function SignupScreen() {
       );
       router.replace("/(tabs)");
     } catch (error: any) {
-      Alert.alert("Signup Failed", error.message || "Could not create account");
+      Alert.alert(
+        "Inscription échouée",
+        error.message || "Impossible de créer le compte",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -98,9 +104,9 @@ export default function SignupScreen() {
 
         {/* Form */}
         <View style={styles.form}>
-          <Text style={styles.title}>Create Account</Text>
+          <Text style={styles.title}>Créer un compte</Text>
           <Text style={styles.subtitle}>
-            Start monitoring your health today
+            Commencez à surveiller votre santé dès aujourd'hui
           </Text>
 
           {/* First Name Input */}
@@ -113,7 +119,7 @@ export default function SignupScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="First Name"
+              placeholder="Prénom"
               placeholderTextColor={AppColors.gray400}
               value={firstName}
               onChangeText={setFirstName}
@@ -131,7 +137,7 @@ export default function SignupScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Last Name"
+              placeholder="Nom"
               placeholderTextColor={AppColors.gray400}
               value={lastName}
               onChangeText={setLastName}
@@ -148,7 +154,7 @@ export default function SignupScreen() {
                 color={AppColors.gray400}
                 style={styles.inputIcon}
               />
-              <Text style={styles.sexLabel}>Sex</Text>
+              <Text style={styles.sexLabel}>Sexe</Text>
             </View>
             <View style={styles.radioGroup}>
               <Pressable
@@ -172,7 +178,7 @@ export default function SignupScreen() {
                     sex === "M" && styles.radioTextSelected,
                   ]}
                 >
-                  Male
+                  Homme
                 </Text>
               </Pressable>
 
@@ -197,7 +203,7 @@ export default function SignupScreen() {
                     sex === "F" && styles.radioTextSelected,
                   ]}
                 >
-                  Female
+                  Femme
                 </Text>
               </Pressable>
             </View>
@@ -213,7 +219,7 @@ export default function SignupScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Email address"
+              placeholder="Adresse email"
               placeholderTextColor={AppColors.gray400}
               value={email}
               onChangeText={setEmail}
@@ -233,7 +239,7 @@ export default function SignupScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Password (min. 6 characters)"
+              placeholder="Mot de passe (min. 6 caractères)"
               placeholderTextColor={AppColors.gray400}
               value={password}
               onChangeText={setPassword}
@@ -262,7 +268,7 @@ export default function SignupScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Confirm Password"
+              placeholder="Confirmer le mot de passe"
               placeholderTextColor={AppColors.gray400}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -272,16 +278,20 @@ export default function SignupScreen() {
 
           {/* Terms */}
           <View style={styles.termsRow}>
-            <Text style={styles.terms}>By signing up, you agree to our </Text>
+            <Text style={styles.terms}>
+              En vous inscrivant, vous acceptez nos{" "}
+            </Text>
             <Link href="/(legal)/terms" asChild>
               <TouchableOpacity>
-                <Text style={styles.termsLink}>Terms of Service</Text>
+                <Text style={styles.termsLink}>Conditions d'utilisation</Text>
               </TouchableOpacity>
             </Link>
-            <Text style={styles.terms}> and </Text>
+            <Text style={styles.terms}> et notre </Text>
             <Link href="/(legal)/privacy" asChild>
               <TouchableOpacity>
-                <Text style={styles.termsLink}>Privacy Policy</Text>
+                <Text style={styles.termsLink}>
+                  Politique de confidentialité
+                </Text>
               </TouchableOpacity>
             </Link>
           </View>
@@ -295,17 +305,17 @@ export default function SignupScreen() {
             {isLoading ? (
               <ActivityIndicator color={AppColors.white} />
             ) : (
-              <Text style={styles.buttonText}>Create Account</Text>
+              <Text style={styles.buttonText}>Créer le compte</Text>
             )}
           </TouchableOpacity>
         </View>
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Already have an account? </Text>
+          <Text style={styles.footerText}>Déjà un compte ? </Text>
           <Link href="/(auth)/login" asChild>
             <TouchableOpacity>
-              <Text style={styles.footerLink}>Sign In</Text>
+              <Text style={styles.footerLink}>Se connecter</Text>
             </TouchableOpacity>
           </Link>
         </View>

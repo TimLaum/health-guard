@@ -23,19 +23,19 @@ import { HistoryRecord, getAnalysisHistory } from "@/services/api";
 const TYPE_CONFIG = {
   eye: {
     icon: "eye-outline" as const,
-    label: "Eye Scan",
+    label: "Scan Oculaire",
     color: AppColors.eyeScan,
     bgColor: "#F3E8FF",
   },
   skin: {
     icon: "body-outline" as const,
-    label: "Skin Scan",
+    label: "Scan Cutané",
     color: AppColors.skinScan,
     bgColor: "#FFF7ED",
   },
   nail: {
     icon: "hand-left-outline" as const,
-    label: "Nail Scan",
+    label: "Scan Ongles",
     color: AppColors.nailScan,
     bgColor: "#FDF2F8",
   },
@@ -70,11 +70,20 @@ export default function HistoryScreen() {
   const filteredHistory =
     filter === "all" ? history : history.filter((item) => item.type === filter);
 
-  function formatDate(dateStr: string) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
+  function formatDate(dateStr: any) {
+    if (!dateStr) return "";
+    // Handle MongoDB Extended JSON {$date: "..."} wrapper
+    const raw =
+      typeof dateStr === "object" && dateStr.$date ? dateStr.$date : dateStr;
+    const str = String(raw);
+    let date = new Date(str);
+    if (isNaN(date.getTime()) && !str.includes("Z") && !str.includes("+")) {
+      date = new Date(str + "Z");
+    }
+    if (isNaN(date.getTime())) return str;
+    return date.toLocaleDateString("fr-FR", {
       day: "numeric",
+      month: "long",
       year: "numeric",
     });
   }
@@ -108,14 +117,20 @@ export default function HistoryScreen() {
         <View style={styles.cardCenter}>
           <Text style={styles.cardType}>{typeConfig.label}</Text>
           <Text style={styles.cardCondition} numberOfLines={1}>
-            {item.message}
+            {typeof item.message === "string"
+              ? item.message
+              : String(item.message ?? "")}
           </Text>
           <Text style={styles.cardDate}>{formatDate(item.created_at)}</Text>
         </View>
 
         {item.hb_level ? (
           <View style={styles.cardRight}>
-            <Text style={styles.hbBadgeText}>{item.hb_level}</Text>
+            <Text style={styles.hbBadgeText}>
+              {typeof item.hb_level === "string"
+                ? item.hb_level
+                : String(item.hb_level)}
+            </Text>
           </View>
         ) : null}
       </TouchableOpacity>
@@ -130,15 +145,15 @@ export default function HistoryScreen() {
           size={64}
           color={AppColors.gray300}
         />
-        <Text style={styles.emptyTitle}>No scans yet</Text>
+        <Text style={styles.emptyTitle}>Aucun scan</Text>
         <Text style={styles.emptySubtitle}>
-          Your analysis history will appear here after your first scan
+          Votre historique d'analyses apparaîtra ici après votre premier scan
         </Text>
         <TouchableOpacity
           style={styles.emptyButton}
           onPress={() => router.push("/(tabs)/capture")}
         >
-          <Text style={styles.emptyButtonText}>Start Your First Scan</Text>
+          <Text style={styles.emptyButtonText}>Lancer votre premier scan</Text>
         </TouchableOpacity>
       </View>
     );
@@ -148,8 +163,8 @@ export default function HistoryScreen() {
     <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>History</Text>
-        <Text style={styles.subtitle}>{history.length} total scans</Text>
+        <Text style={styles.title}>Historique</Text>
+        <Text style={styles.subtitle}>{history.length} scan(s) au total</Text>
       </View>
 
       {/* Filters */}
@@ -166,7 +181,7 @@ export default function HistoryScreen() {
                 filter === f && styles.filterTextActive,
               ]}
             >
-              {f === "all" ? "All" : TYPE_CONFIG[f].label}
+              {f === "all" ? "Tous" : TYPE_CONFIG[f].label}
             </Text>
           </TouchableOpacity>
         ))}

@@ -2,7 +2,7 @@
  * Forgot Password Screen - HealthGuard Vision
  */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -14,27 +14,27 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
-} from 'react-native';
-import { Link, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { AppColors } from '@/constants/colors';
+} from "react-native";
+import { Link, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { AppColors } from "@/constants/colors";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
   async function handleResetPassword() {
     if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email address');
+      Alert.alert("Erreur", "Veuillez entrer votre adresse email");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      Alert.alert("Erreur", "Veuillez entrer une adresse email valide");
       return;
     }
 
@@ -47,7 +47,10 @@ export default function ForgotPasswordScreen() {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       setIsSent(true);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to send reset email');
+      Alert.alert(
+        "Erreur",
+        error.message || "Impossible d'envoyer l'email de réinitialisation",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -56,14 +59,17 @@ export default function ForgotPasswordScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
         {/* Back Button */}
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Ionicons name="arrow-back" size={24} color={AppColors.gray700} />
         </TouchableOpacity>
 
@@ -71,18 +77,18 @@ export default function ForgotPasswordScreen() {
         <View style={styles.header}>
           <View style={styles.iconContainer}>
             <Ionicons
-              name={isSent ? 'mail-open-outline' : 'key-outline'}
+              name={isSent ? "mail-open-outline" : "key-outline"}
               size={48}
               color={AppColors.primary}
             />
           </View>
           <Text style={styles.title}>
-            {isSent ? 'Check Your Email' : 'Forgot Password?'}
+            {isSent ? "Vérifiez vos emails" : "Mot de passe oublié ?"}
           </Text>
           <Text style={styles.subtitle}>
             {isSent
-              ? `We've sent a password reset link to\n${email.trim()}`
-              : "No worries! Enter your email address and we'll send you a reset link."}
+              ? `Nous avons envoyé un lien de réinitialisation à\n${email.trim()}`
+              : "Pas de souci ! Entrez votre adresse email et nous vous enverrons un lien de réinitialisation."}
           </Text>
         </View>
 
@@ -91,10 +97,15 @@ export default function ForgotPasswordScreen() {
           <View style={styles.form}>
             {/* Email Input */}
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color={AppColors.gray400}
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
-                placeholder="Email address"
+                placeholder="Adresse email"
                 placeholderTextColor={AppColors.gray400}
                 value={email}
                 onChangeText={setEmail}
@@ -114,7 +125,7 @@ export default function ForgotPasswordScreen() {
               {isLoading ? (
                 <ActivityIndicator color={AppColors.white} />
               ) : (
-                <Text style={styles.buttonText}>Send Reset Link</Text>
+                <Text style={styles.buttonText}>Envoyer le lien</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -123,12 +134,24 @@ export default function ForgotPasswordScreen() {
           <View style={styles.form}>
             <View style={styles.successInfo}>
               <View style={styles.infoRow}>
-                <Ionicons name="time-outline" size={18} color={AppColors.gray500} />
-                <Text style={styles.infoText}>Link expires in 15 minutes</Text>
+                <Ionicons
+                  name="time-outline"
+                  size={18}
+                  color={AppColors.gray500}
+                />
+                <Text style={styles.infoText}>
+                  Le lien expire dans 15 minutes
+                </Text>
               </View>
               <View style={styles.infoRow}>
-                <Ionicons name="folder-outline" size={18} color={AppColors.gray500} />
-                <Text style={styles.infoText}>Check your spam/junk folder too</Text>
+                <Ionicons
+                  name="folder-outline"
+                  size={18}
+                  color={AppColors.gray500}
+                />
+                <Text style={styles.infoText}>
+                  Vérifiez aussi votre dossier spam
+                </Text>
               </View>
             </View>
 
@@ -137,19 +160,25 @@ export default function ForgotPasswordScreen() {
               style={styles.outlineButton}
               onPress={() => {
                 setIsSent(false);
-                setEmail('');
+                setEmail("");
               }}
             >
-              <Ionicons name="refresh-outline" size={18} color={AppColors.primary} />
-              <Text style={styles.outlineButtonText}>Try a different email</Text>
+              <Ionicons
+                name="refresh-outline"
+                size={18}
+                color={AppColors.primary}
+              />
+              <Text style={styles.outlineButtonText}>
+                Essayer un autre email
+              </Text>
             </TouchableOpacity>
 
             {/* Back to Login */}
             <TouchableOpacity
               style={styles.button}
-              onPress={() => router.replace('/(auth)/login')}
+              onPress={() => router.replace("/(auth)/login")}
             >
-              <Text style={styles.buttonText}>Back to Sign In</Text>
+              <Text style={styles.buttonText}>Retour à la connexion</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -157,10 +186,12 @@ export default function ForgotPasswordScreen() {
         {/* Footer */}
         {!isSent && (
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Remember your password? </Text>
+            <Text style={styles.footerText}>
+              Vous vous souvenez du mot de passe ?{" "}
+            </Text>
             <Link href="/(auth)/login" asChild>
               <TouchableOpacity>
-                <Text style={styles.footerLink}>Sign In</Text>
+                <Text style={styles.footerLink}>Se connecter</Text>
               </TouchableOpacity>
             </Link>
           </View>
@@ -185,17 +216,17 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 14,
     backgroundColor: AppColors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 32,
   },
   iconContainer: {
@@ -203,28 +234,28 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 24,
     backgroundColor: AppColors.primaryBg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 20,
   },
   title: {
     fontSize: 26,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 15,
     color: AppColors.gray500,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 22,
   },
   form: {
     backgroundColor: AppColors.white,
     borderRadius: 24,
     padding: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -232,8 +263,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: AppColors.inputBg,
     borderRadius: 14,
     paddingHorizontal: 16,
@@ -253,8 +284,8 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.primary,
     borderRadius: 14,
     height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: AppColors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -267,12 +298,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: AppColors.white,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   outlineButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     height: 52,
     borderRadius: 14,
     borderWidth: 1.5,
@@ -282,15 +313,15 @@ const styles = StyleSheet.create({
   outlineButtonText: {
     color: AppColors.primary,
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   successInfo: {
     gap: 12,
     paddingVertical: 4,
   },
   infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   infoText: {
@@ -298,8 +329,8 @@ const styles = StyleSheet.create({
     color: AppColors.gray600,
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 24,
   },
   footerText: {
@@ -309,6 +340,6 @@ const styles = StyleSheet.create({
   footerLink: {
     fontSize: 15,
     color: AppColors.primary,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });

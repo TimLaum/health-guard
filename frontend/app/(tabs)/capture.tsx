@@ -25,36 +25,36 @@ const { width } = Dimensions.get("window");
 
 const SCAN_CONFIG = {
   eye: {
-    title: "Eye Scan",
-    instruction: "Take a clear photo of your eye in good lighting",
+    title: "Scan Oculaire",
+    instruction: "Prenez une photo claire de votre œil avec un bon éclairage",
     tips: [
-      "Look straight at the camera",
-      "Ensure bright, even lighting",
-      "Hold steady for a clear shot",
+      "Regardez droit vers la caméra",
+      "Assurez un éclairage vif et uniforme",
+      "Restez stable pour une photo nette",
     ],
     icon: "eye-outline" as const,
     color: AppColors.eyeScan,
     bgColor: "#F3E8FF",
   },
   skin: {
-    title: "Skin Scan",
-    instruction: "Take a photo of the skin area you want to analyze",
+    title: "Scan Cutané",
+    instruction: "Prenez une photo de la zone de peau à analyser",
     tips: [
-      "Capture the affected area clearly",
-      "Use natural light if possible",
-      "Keep camera 15-20cm away",
+      "Capturez clairement la zone concernée",
+      "Utilisez la lumière naturelle si possible",
+      "Gardez la caméra à 15-20 cm",
     ],
     icon: "body-outline" as const,
     color: AppColors.skinScan,
     bgColor: "#FFF7ED",
   },
   nail: {
-    title: "Nail Scan",
-    instruction: "Take a photo of your fingernails on a flat surface",
+    title: "Scan Ongles",
+    instruction: "Prenez une photo de vos ongles sur une surface plane",
     tips: [
-      "Place hand on a flat, well-lit surface",
-      "Capture all nails if possible",
-      "Remove nail polish first",
+      "Placez la main sur une surface plane bien éclairée",
+      "Capturez tous les ongles si possible",
+      "Retirez le vernis à ongles au préalable",
     ],
     icon: "hand-left-outline" as const,
     color: AppColors.nailScan,
@@ -78,8 +78,8 @@ export default function CaptureScreen() {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
-        "Permission needed",
-        "Camera access is required to take photos",
+        "Permission requise",
+        "L'accès à la caméra est nécessaire pour prendre des photos",
       );
       return;
     }
@@ -100,8 +100,8 @@ export default function CaptureScreen() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
-        "Permission needed",
-        "Gallery access is required to select photos",
+        "Permission requise",
+        "L'accès à la galerie est nécessaire pour sélectionner des photos",
       );
       return;
     }
@@ -137,8 +137,8 @@ export default function CaptureScreen() {
     } catch (error: any) {
       setIsAnalyzing(false);
       Alert.alert(
-        "Analysis Failed",
-        error.message || "Could not analyze the image. Please try again.",
+        "Analyse échouée",
+        error.message || "Échec de l'analyse de l'image. Veuillez réessayer.",
       );
     }
   }
@@ -152,9 +152,9 @@ export default function CaptureScreen() {
       {/* Type Selector */}
       {!scanType ? (
         <View style={styles.typeSelectorContainer}>
-          <Text style={styles.selectorTitle}>Select Scan Type</Text>
+          <Text style={styles.selectorTitle}>Choisir le type de scan</Text>
           <Text style={styles.selectorSubtitle}>
-            Choose what you want to analyze
+            Sélectionnez ce que vous souhaitez analyser
           </Text>
 
           <View style={styles.typeButtonsGrid}>
@@ -224,7 +224,7 @@ export default function CaptureScreen() {
               />
               <TouchableOpacity style={styles.retakeBtn} onPress={resetImage}>
                 <Ionicons name="refresh" size={20} color={AppColors.white} />
-                <Text style={styles.retakeBtnText}>Retake</Text>
+                <Text style={styles.retakeBtnText}>Reprendre</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -259,7 +259,7 @@ export default function CaptureScreen() {
                   onPress={takePhoto}
                 >
                   <Ionicons name="camera" size={28} color={AppColors.white} />
-                  <Text style={styles.cameraButtonText}>Take Photo</Text>
+                  <Text style={styles.cameraButtonText}>Prendre une photo</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -271,7 +271,7 @@ export default function CaptureScreen() {
                     size={24}
                     color={AppColors.primary}
                   />
-                  <Text style={styles.galleryButtonText}>Gallery</Text>
+                  <Text style={styles.galleryButtonText}>Galerie</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -291,19 +291,23 @@ export default function CaptureScreen() {
                 {isAnalyzing ? (
                   <View style={styles.analyzingContent}>
                     <ActivityIndicator color={AppColors.white} />
-                    <Text style={styles.analyzeButtonText}>Analyzing...</Text>
+                    <Text style={styles.analyzeButtonText}>
+                      Analyse en cours...
+                    </Text>
                   </View>
                 ) : (
                   <View style={styles.analyzingContent}>
                     <Ionicons name="scan" size={22} color={AppColors.white} />
-                    <Text style={styles.analyzeButtonText}>Analyze Image</Text>
+                    <Text style={styles.analyzeButtonText}>
+                      Analyser l'image
+                    </Text>
                   </View>
                 )}
               </TouchableOpacity>
 
               {isAnalyzing && (
                 <Text style={styles.analyzingHint}>
-                  Our AI is processing your image...
+                  Notre IA traite votre image...
                 </Text>
               )}
             </View>

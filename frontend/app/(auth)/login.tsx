@@ -2,7 +2,7 @@
  * Login Screen - HealthGuard Vision
  */
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -14,34 +14,37 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
-} from 'react-native';
-import { Link, useRouter } from 'expo-router';
-import { Image } from 'expo-image';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@/contexts/auth-context';
-import { AppColors } from '@/constants/colors';
+} from "react-native";
+import { Link, useRouter } from "expo-router";
+import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "@/contexts/auth-context";
+import { AppColors } from "@/constants/colors";
 
 export default function LoginScreen() {
   const router = useRouter();
   const { login } = useAuth();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleLogin() {
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert("Erreur", "Veuillez remplir tous les champs");
       return;
     }
 
     setIsLoading(true);
     try {
       await login(email.trim(), password);
-      router.replace('/(tabs)');
+      router.replace("/(tabs)");
     } catch (error: any) {
-      Alert.alert('Login Failed', error.message || 'Invalid email or password');
+      Alert.alert(
+        "Connexion échouée",
+        error.message || "Email ou mot de passe invalide",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +53,7 @@ export default function LoginScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -60,7 +63,7 @@ export default function LoginScreen() {
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <Image
-              source={require('@/assets/images/logo.png')}
+              source={require("@/assets/images/logo.png")}
               style={styles.logoImage}
               contentFit="contain"
             />
@@ -71,15 +74,22 @@ export default function LoginScreen() {
 
         {/* Form */}
         <View style={styles.form}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue your health monitoring</Text>
+          <Text style={styles.title}>Bon retour !</Text>
+          <Text style={styles.subtitle}>
+            Connectez-vous pour continuer votre suivi santé
+          </Text>
 
           {/* Email Input */}
           <View style={styles.inputContainer}>
-            <Ionicons name="mail-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+            <Ionicons
+              name="mail-outline"
+              size={20}
+              color={AppColors.gray400}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
-              placeholder="Email address"
+              placeholder="Adresse email"
               placeholderTextColor={AppColors.gray400}
               value={email}
               onChangeText={setEmail}
@@ -91,19 +101,27 @@ export default function LoginScreen() {
 
           {/* Password Input */}
           <View style={styles.inputContainer}>
-            <Ionicons name="lock-closed-outline" size={20} color={AppColors.gray400} style={styles.inputIcon} />
+            <Ionicons
+              name="lock-closed-outline"
+              size={20}
+              color={AppColors.gray400}
+              style={styles.inputIcon}
+            />
             <TextInput
               style={styles.input}
-              placeholder="Password"
+              placeholder="Mot de passe"
               placeholderTextColor={AppColors.gray400}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               autoComplete="password"
             />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+            <TouchableOpacity
+              onPress={() => setShowPassword(!showPassword)}
+              style={styles.eyeIcon}
+            >
               <Ionicons
-                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
                 size={20}
                 color={AppColors.gray400}
               />
@@ -113,7 +131,9 @@ export default function LoginScreen() {
           {/* Forgot Password */}
           <Link href="/(auth)/forgot-password" asChild>
             <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <Text style={styles.forgotPasswordText}>
+                Mot de passe oublié ?
+              </Text>
             </TouchableOpacity>
           </Link>
 
@@ -126,17 +146,17 @@ export default function LoginScreen() {
             {isLoading ? (
               <ActivityIndicator color={AppColors.white} />
             ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
+              <Text style={styles.buttonText}>Se connecter</Text>
             )}
           </TouchableOpacity>
         </View>
 
         {/* Sign Up Link */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
+          <Text style={styles.footerText}>Pas encore de compte ? </Text>
           <Link href="/(auth)/signup" asChild>
             <TouchableOpacity>
-              <Text style={styles.footerLink}>Sign Up</Text>
+              <Text style={styles.footerLink}>S'inscrire</Text>
             </TouchableOpacity>
           </Link>
         </View>
@@ -145,19 +165,19 @@ export default function LoginScreen() {
         <View style={styles.legalRow}>
           <Link href="/(legal)/terms" asChild>
             <TouchableOpacity>
-              <Text style={styles.legalLink}>Terms of Service</Text>
+              <Text style={styles.legalLink}>Conditions d'utilisation</Text>
             </TouchableOpacity>
           </Link>
           <Text style={styles.legalDot}>·</Text>
           <Link href="/(legal)/privacy" asChild>
             <TouchableOpacity>
-              <Text style={styles.legalLink}>Privacy Policy</Text>
+              <Text style={styles.legalLink}>Politique de confidentialité</Text>
             </TouchableOpacity>
           </Link>
           <Text style={styles.legalDot}>·</Text>
           <Link href="/guide" asChild>
             <TouchableOpacity>
-              <Text style={styles.legalLink}>App Guide</Text>
+              <Text style={styles.legalLink}>Guide</Text>
             </TouchableOpacity>
           </Link>
         </View>
@@ -173,11 +193,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 24,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 32,
   },
   logoContainer: {
@@ -185,15 +205,15 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 28,
     backgroundColor: AppColors.primaryBg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 16,
     shadowColor: AppColors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 6,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   logoImage: {
     width: 80,
@@ -201,7 +221,7 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.primary,
     letterSpacing: 0.5,
   },
@@ -214,7 +234,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white,
     borderRadius: 24,
     padding: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -222,7 +242,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 4,
   },
@@ -232,8 +252,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: AppColors.inputBg,
     borderRadius: 14,
     paddingHorizontal: 16,
@@ -254,20 +274,20 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   forgotPassword: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: 24,
   },
   forgotPasswordText: {
     fontSize: 14,
     color: AppColors.primary,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   button: {
     backgroundColor: AppColors.primary,
     borderRadius: 14,
     height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: AppColors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -280,11 +300,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: AppColors.white,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginTop: 24,
   },
   footerText: {
@@ -294,19 +314,19 @@ const styles = StyleSheet.create({
   footerLink: {
     fontSize: 15,
     color: AppColors.primary,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   legalRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 20,
     gap: 6,
   },
   legalLink: {
     fontSize: 13,
     color: AppColors.gray400,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   legalDot: {
     fontSize: 13,

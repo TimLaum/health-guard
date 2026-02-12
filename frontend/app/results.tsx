@@ -206,9 +206,6 @@ export default function ResultsScreen() {
               >
                 {result.primary_diagnosis}
               </Text>
-              <Text style={styles.confidenceText}>
-                Confiance : {result.confidence}%
-              </Text>
             </View>
           </View>
 
@@ -220,7 +217,6 @@ export default function ResultsScreen() {
                 <Text style={styles.predRankText}>{index + 1}</Text>
               </View>
               <Text style={styles.predDisease}>{pred.disease}</Text>
-              <Text style={styles.predConfidence}>{pred.confidence}%</Text>
             </View>
           ))}
         </View>

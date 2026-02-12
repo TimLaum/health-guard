@@ -3,7 +3,7 @@
  * Shows past analysis results
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,15 +11,15 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppColors } from "@/constants/colors";
 import { HistoryRecord, getAnalysisHistory } from "@/services/api";
 
 // ─── Helpers ─────────────────────────────────────────────────────────
-
 const TYPE_CONFIG = {
   eye: {
     icon: "eye-outline" as const,
@@ -48,22 +48,37 @@ export default function HistoryScreen() {
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<FilterType>("all");
   const [history, setHistory] = useState<HistoryRecord[]>([]);
+
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    loadHistory();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadHistory();
+    }, []),
+  );
 
-  async function loadHistory() {
+  async function loadHistory(showLoadingState = true) {
     try {
-      setLoading(true);
+      if (showLoadingState) setLoading(true);
       const data = await getAnalysisHistory();
       setHistory(data);
     } catch {
-      // API not available yet — show empty state
       setHistory([]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function onRefresh() {
+    setRefreshing(true);
+    try {
+      const data = await getAnalysisHistory();
+      setHistory(data);
+    } catch {
+      // Erreur silencieuse ou Toast
+    } finally {
+      setRefreshing(false);
     }
   }
 
@@ -72,7 +87,6 @@ export default function HistoryScreen() {
 
   function formatDate(dateStr: any) {
     if (!dateStr) return "";
-    // Handle MongoDB Extended JSON {$date: "..."} wrapper
     const raw =
       typeof dateStr === "object" && dateStr.$date ? dateStr.$date : dateStr;
     const str = String(raw);
@@ -90,7 +104,6 @@ export default function HistoryScreen() {
 
   function renderItem({ item }: { item: HistoryRecord }) {
     const typeConfig = TYPE_CONFIG[item.type];
-
     return (
       <TouchableOpacity
         style={styles.card}
@@ -113,7 +126,6 @@ export default function HistoryScreen() {
             />
           </View>
         </View>
-
         <View style={styles.cardCenter}>
           <Text style={styles.cardType}>{typeConfig.label}</Text>
           <Text style={styles.cardCondition} numberOfLines={1}>
@@ -123,7 +135,6 @@ export default function HistoryScreen() {
           </Text>
           <Text style={styles.cardDate}>{formatDate(item.created_at)}</Text>
         </View>
-
         {item.hb_level ? (
           <View style={styles.cardRight}>
             <Text style={styles.hbBadgeText}>
@@ -187,7 +198,7 @@ export default function HistoryScreen() {
         ))}
       </View>
 
-      {/* List */}
+      {/* List avec RefreshControl */}
       {loading ? (
         <View style={styles.emptyContainer}>
           <ActivityIndicator size="large" color={AppColors.primary} />
@@ -200,6 +211,14 @@ export default function HistoryScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={renderEmpty}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[AppColors.primary]}
+              tintColor={AppColors.primary}
+            />
+          }
         />
       )}
     </View>

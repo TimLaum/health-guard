@@ -3,7 +3,12 @@
  * Wraps the app with AuthProvider and handles routing based on auth state
  */
 
-import { Stack, useRouter, useSegments } from "expo-router";
+import {
+  Stack,
+  useRouter,
+  useSegments,
+  useLocalSearchParams,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -27,8 +32,8 @@ function RootLayoutNav() {
   const { isAuthenticated, isLoading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
-
-  // Onboarding + animated splash state
+  const params = useLocalSearchParams();
+  const { fromOnboarding } = params;
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
   const [showSplash, setShowSplash] = useState(true);
   const splashOpacity = useRef(new Animated.Value(1)).current;
@@ -72,29 +77,52 @@ function RootLayoutNav() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Route guard — runs after both auth + onboarding state are known
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
-    if (isLoading || onboardingDone === null) return;
+    setIsMounted(true);
+  }, []);
 
-    const inAuthGroup = segments[0] === "(auth)";
-    const inPublicGroup = segments[0] === "(legal)" || segments[0] === "guide";
-    const onOnboarding = segments[0] === "onboarding";
+  useEffect(() => {
+    if (!isMounted || isLoading || (onboardingDone === null && !fromOnboarding))
+      return;
 
-    if (!onboardingDone && !onOnboarding) {
-      router.replace("/onboarding");
-    } else if (
-      onboardingDone &&
-      !isAuthenticated &&
-      !inAuthGroup &&
-      !inPublicGroup &&
-      !onOnboarding
-    ) {
-      router.replace("/(auth)/login");
-    } else if (isAuthenticated && (inAuthGroup || onOnboarding)) {
-      router.replace("/(tabs)");
+    const rootSegment = segments[0];
+
+    const hasFinishedOnboarding =
+      onboardingDone === true || fromOnboarding === "true";
+
+    if (!hasFinishedOnboarding) {
+      if (rootSegment !== "onboarding") {
+        router.replace("/onboarding");
+      }
+      return;
     }
-  }, [isAuthenticated, isLoading, onboardingDone, segments]);
 
+    if (!isAuthenticated) {
+      const isPublicArea =
+        rootSegment === "(auth)" ||
+        rootSegment === "(legal)" ||
+        rootSegment === "guide";
+
+      if (!isPublicArea) {
+        router.replace("/(auth)/login");
+      }
+    } else {
+      const isInsideApp = rootSegment === "(tabs)" || rootSegment === "results";
+
+      if (!isInsideApp) {
+        router.replace("/(tabs)");
+      }
+    }
+  }, [
+    isAuthenticated,
+    isLoading,
+    onboardingDone,
+    segments,
+    isMounted,
+    fromOnboarding,
+  ]);
   // Show a blank loader only if the onboarding state hasn't resolved yet
   if (isLoading || onboardingDone === null) {
     return (
@@ -150,7 +178,9 @@ function RootLayoutNav() {
           </Animated.View>
           <Animated.View style={{ opacity: textOpacity }}>
             <Text style={splashStyles.title}>HealthGuard</Text>
-            <Text style={splashStyles.subtitle}>Dépistage Santé par IA</Text>
+            <Text style={splashStyles.subtitle}>
+              AI-Powered Health Screening
+            </Text>
           </Animated.View>
         </Animated.View>
       )}

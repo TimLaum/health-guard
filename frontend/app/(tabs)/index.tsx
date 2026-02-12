@@ -136,7 +136,7 @@ export default function HomeScreen() {
         {SCAN_OPTIONS.map((option) => (
           <TouchableOpacity
             key={option.id}
-            style={styles.scanCard}
+            style={[styles.scanCard, { borderLeftColor: option.color }]}
             onPress={() => handleScan(option.id)}
             activeOpacity={0.7}
           >
@@ -146,20 +146,27 @@ export default function HomeScreen() {
                 { backgroundColor: option.bgColor },
               ]}
             >
-              <Ionicons name={option.icon} size={32} color={option.color} />
+              <Ionicons name={option.icon} size={28} color={option.color} />
             </View>
-            <Text style={styles.scanTitle}>{option.title}</Text>
-            <Text style={styles.scanSubtitle}>{option.subtitle}</Text>
-            <View
-              style={[
-                styles.scanDetectsBadge,
-                { backgroundColor: option.bgColor },
-              ]}
-            >
-              <Text style={[styles.scanDetectsText, { color: option.color }]}>
-                {option.detects}
-              </Text>
+            <View style={styles.scanTextContainer}>
+              <Text style={styles.scanTitle}>{option.title}</Text>
+              <Text style={styles.scanSubtitle}>{option.subtitle}</Text>
+              <View
+                style={[
+                  styles.scanDetectsBadge,
+                  { backgroundColor: option.bgColor },
+                ]}
+              >
+                <Text style={[styles.scanDetectsText, { color: option.color }]}>
+                  {option.detects}
+                </Text>
+              </View>
             </View>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={AppColors.gray300}
+            />
           </TouchableOpacity>
         ))}
       </View>
@@ -290,15 +297,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   scanGrid: {
-    flexDirection: "row",
     gap: 12,
   },
   scanCard: {
-    flex: 1,
-    backgroundColor: AppColors.white,
-    borderRadius: 18,
-    padding: 14,
+    flexDirection: "row",
     alignItems: "center",
+    backgroundColor: AppColors.white,
+    borderRadius: 16,
+    padding: 16,
+    gap: 14,
+    borderLeftWidth: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -306,33 +314,35 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   scanIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: 52,
+    height: 52,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+  },
+  scanTextContainer: {
+    flex: 1,
   },
   scanTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 2,
   },
   scanSubtitle: {
-    fontSize: 11,
+    fontSize: 13,
     color: AppColors.gray400,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   scanDetectsBadge: {
-    paddingHorizontal: 8,
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
   scanDetectsText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: "600",
-    textAlign: "center",
   },
   tipsContainer: {
     marginTop: 12,

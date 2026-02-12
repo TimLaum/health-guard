@@ -127,13 +127,13 @@ jobs:
               # Load and validate
               interpreter = tf.lite.Interpreter(model_path=model_file)
               interpreter.allocate_tensors()
-              print(f" {model_file}")
-              print(f"   Input shape: {input_details[0]['shape']}")
-              print(f"   Output shape: {output_details[0]['shape']}")
+              print(f"{model_file}")
+              print(f"Input shape: {input_details[0]['shape']}")
+              print(f"Output shape: {output_details[0]['shape']}")
           
-          print("\n Models validated successfully!")
-              print(f"   Input shape: {input_details[0]['shape']}")
-              print(f"   Output shape: {output_details[0]['shape']}")
+              print("\n Models validated successfully!")
+              print(f"Input shape: {input_details[0]['shape']}")
+              print(f"Output shape: {output_details[0]['shape']}")
           
           print("\n Models validated successfully!")
           EOF

@@ -28,6 +28,7 @@ import {
   exportDataApi,
   deleteHistoryApi,
 } from "@/services/api";
+import HistoryScreen from "./history";
 
 interface MenuItem {
   icon: keyof typeof Ionicons.glyphMap;

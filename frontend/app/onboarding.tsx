@@ -99,8 +99,18 @@ export default function OnboardingScreen() {
   }).current;
 
   async function completeOnboarding() {
-    await AsyncStorage.setItem(ONBOARDING_KEY, "true");
-    router.replace("/(auth)/login");
+    try {
+      // 1. On écrit sur le disque (pour le prochain redémarrage)
+      await AsyncStorage.setItem(ONBOARDING_KEY, "true");
+
+      // 2. On navigue avec un paramètre spécial
+      router.replace({
+        pathname: "/(auth)/login",
+        params: { fromOnboarding: "true" }, // <--- C'est la clé qui stop la boucle
+      });
+    } catch (error) {
+      console.error("Erreur sauvegarde onboarding:", error);
+    }
   }
 
   function handleNext() {

@@ -28,12 +28,14 @@ function RootLayoutNav() {
   const logoScale = useRef(new Animated.Value(0.8)).current;
   const textOpacity = useRef(new Animated.Value(0)).current;
 
-  // Check onboarding flag on mount
+  // Check onboarding flag on mount and when segments change
   useEffect(() => {
-    AsyncStorage.getItem(ONBOARDING_KEY).then((value) => {
+    const checkOnboarding = async () => {
+      const value = await AsyncStorage.getItem(ONBOARDING_KEY);
       setOnboardingDone(value === 'true');
-    });
-  }, []);
+    };
+    checkOnboarding();
+  }, [segments]);
 
   // Animate splash: logo scale-in + text fade-in, then fade out
   useEffect(() => {

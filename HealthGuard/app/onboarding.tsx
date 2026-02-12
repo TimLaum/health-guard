@@ -97,8 +97,15 @@ export default function OnboardingScreen() {
   const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
   async function completeOnboarding() {
-    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-    router.replace('/(auth)/login');
+    try {
+      await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+      // Add a small delay to ensure AsyncStorage write completes
+      setTimeout(() => {
+        router.replace('/(auth)/login');
+      }, 100);
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+    }
   }
 
   function handleNext() {

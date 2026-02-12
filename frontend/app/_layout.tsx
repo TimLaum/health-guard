@@ -3,18 +3,24 @@
  * Wraps the app with AuthProvider and handles routing based on auth state
  */
 
-import { Stack, useRouter, useSegments } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState, useRef } from 'react';
-import { ActivityIndicator, View, Text, Animated, StyleSheet } from 'react-native';
-import { Image } from 'expo-image';
-import 'react-native-reanimated';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Stack, useRouter, useSegments } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState, useRef } from "react";
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  Animated,
+  StyleSheet,
+} from "react-native";
+import { Image } from "expo-image";
+import "react-native-reanimated";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { AuthProvider, useAuth } from '@/contexts/auth-context';
-import { AppColors } from '@/constants/colors';
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
+import { AppColors } from "@/constants/colors";
 
-const ONBOARDING_KEY = 'healthguard_onboarding_done';
+const ONBOARDING_KEY = "healthguard_onboarding_done";
 
 function RootLayoutNav() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -31,7 +37,7 @@ function RootLayoutNav() {
   // Check onboarding flag on mount
   useEffect(() => {
     AsyncStorage.getItem(ONBOARDING_KEY).then((value) => {
-      setOnboardingDone(value === 'true');
+      setOnboardingDone(value === "true");
     });
   }, []);
 
@@ -69,23 +75,36 @@ function RootLayoutNav() {
   useEffect(() => {
     if (isLoading || onboardingDone === null) return;
 
-    const inAuthGroup = segments[0] === '(auth)';
-    const inPublicGroup = segments[0] === '(legal)' || segments[0] === 'guide';
-    const onOnboarding = segments[0] === 'onboarding';
+    const inAuthGroup = segments[0] === "(auth)";
+    const inPublicGroup = segments[0] === "(legal)" || segments[0] === "guide";
+    const onOnboarding = segments[0] === "onboarding";
 
     if (!onboardingDone && !onOnboarding) {
-      router.replace('/onboarding');
-    } else if (onboardingDone && !isAuthenticated && !inAuthGroup && !inPublicGroup && !onOnboarding) {
-      router.replace('/(auth)/login');
+      router.replace("/onboarding");
+    } else if (
+      onboardingDone &&
+      !isAuthenticated &&
+      !inAuthGroup &&
+      !inPublicGroup &&
+      !onOnboarding
+    ) {
+      router.replace("/(auth)/login");
     } else if (isAuthenticated && (inAuthGroup || onOnboarding)) {
-      router.replace('/(tabs)');
+      router.replace("/(tabs)");
     }
   }, [isAuthenticated, isLoading, onboardingDone, segments]);
 
   // Show a blank loader only if the onboarding state hasn't resolved yet
   if (isLoading || onboardingDone === null) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: AppColors.background }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: AppColors.background,
+        }}
+      >
         <ActivityIndicator size="large" color={AppColors.primary} />
       </View>
     );
@@ -101,34 +120,36 @@ function RootLayoutNav() {
         <Stack.Screen
           name="guide"
           options={{
-            presentation: 'modal',
+            presentation: "modal",
             headerShown: false,
-            animation: 'slide_from_bottom',
+            animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
           name="results"
           options={{
-            presentation: 'modal',
+            presentation: "modal",
             headerShown: false,
-            animation: 'slide_from_bottom',
+            animation: "slide_from_bottom",
           }}
         />
       </Stack>
 
       {/* Animated Splash Overlay */}
       {showSplash && (
-        <Animated.View style={[splashStyles.overlay, { opacity: splashOpacity }]}>
+        <Animated.View
+          style={[splashStyles.overlay, { opacity: splashOpacity }]}
+        >
           <Animated.View style={{ transform: [{ scale: logoScale }] }}>
             <Image
-              source={require('@/assets/images/logo.png')}
+              source={require("@/assets/images/logo.png")}
               style={splashStyles.logo}
               contentFit="contain"
             />
           </Animated.View>
           <Animated.View style={{ opacity: textOpacity }}>
             <Text style={splashStyles.title}>HealthGuard</Text>
-            <Text style={splashStyles.subtitle}>AI-Powered Health Screening</Text>
+            <Text style={splashStyles.subtitle}>Dépistage Santé par IA</Text>
           </Animated.View>
         </Animated.View>
       )}
@@ -142,8 +163,8 @@ const splashStyles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: AppColors.primaryBg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     zIndex: 999,
   },
   logo: {
@@ -153,17 +174,17 @@ const splashStyles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: '800',
+    fontWeight: "800",
     color: AppColors.primary,
-    textAlign: 'center',
+    textAlign: "center",
     letterSpacing: 0.5,
   },
   subtitle: {
     fontSize: 15,
     color: AppColors.gray500,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 8,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });
 

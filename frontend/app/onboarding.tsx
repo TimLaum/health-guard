@@ -3,7 +3,7 @@
  * 3-slide intro shown on first launch only
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
@@ -13,16 +13,16 @@ import {
   TouchableOpacity,
   Animated,
   ViewToken,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppColors } from '@/constants/colors';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppColors } from "@/constants/colors";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
-const ONBOARDING_KEY = 'healthguard_onboarding_done';
+const ONBOARDING_KEY = "healthguard_onboarding_done";
 
 interface Slide {
   id: string;
@@ -36,45 +36,45 @@ interface Slide {
 
 const SLIDES: Slide[] = [
   {
-    id: '1',
-    icon: 'shield-checkmark',
+    id: "1",
+    icon: "shield-checkmark",
     iconColor: AppColors.primary,
     iconBg: AppColors.primaryBg,
-    title: 'AI-Powered\nHealth Screening',
+    title: "Dépistage Santé\npar IA",
     subtitle:
-      'Advanced artificial intelligence analyzes your photos to detect early signs of health conditions — quick, easy, and non-invasive.',
+      "L'intelligence artificielle analyse vos photos pour détecter les premiers signes de problèmes de santé — rapide, simple et non invasif.",
     features: [
-      { icon: 'flash-outline', text: 'Results in seconds' },
-      { icon: 'lock-closed-outline', text: 'Private & secure' },
-      { icon: 'cloud-outline', text: 'Cloud-powered AI models' },
+      { icon: "flash-outline", text: "Résultats en quelques secondes" },
+      { icon: "lock-closed-outline", text: "Privé et sécurisé" },
+      { icon: "cloud-outline", text: "Modèles IA dans le cloud" },
     ],
   },
   {
-    id: '2',
-    icon: 'scan',
+    id: "2",
+    icon: "scan",
     iconColor: AppColors.secondary,
-    iconBg: '#EEF2FF',
-    title: 'Scan Eyes,\nSkin & Nails',
+    iconBg: "#EEF2FF",
+    title: "Scannez Yeux,\nPeau & Ongles",
     subtitle:
-      'Three specialized scans target different health indicators. Simply take a photo and let our AI do the rest.',
+      "Trois scans spécialisés ciblent différents indicateurs de santé. Prenez simplement une photo et laissez notre IA faire le reste.",
     features: [
-      { icon: 'eye-outline', text: 'Eye scan — Diabetes indicators' },
-      { icon: 'body-outline', text: 'Skin scan — Nutritional deficiencies' },
-      { icon: 'hand-left-outline', text: 'Nail scan — Anemia markers' },
+      { icon: "eye-outline", text: "Scan oculaire — Indicateurs de diabète" },
+      { icon: "body-outline", text: "Scan cutané — Carences nutritionnelles" },
+      { icon: "hand-left-outline", text: "Scan ongles — Marqueurs d'anémie" },
     ],
   },
   {
-    id: '3',
-    icon: 'analytics',
+    id: "3",
+    icon: "analytics",
     iconColor: AppColors.success,
-    iconBg: '#ECFDF5',
-    title: 'Instant Results\n& Guidance',
+    iconBg: "#ECFDF5",
+    title: "Résultats Instantanés\n& Conseils",
     subtitle:
-      'Get a clear probability score with personalized recommendations. Track your history and monitor changes over time.',
+      "Obtenez un score de probabilité clair avec des recommandations personnalisées. Suivez votre historique et surveillez les évolutions.",
     features: [
-      { icon: 'bar-chart-outline', text: 'Clear probability scores' },
-      { icon: 'medical-outline', text: 'Personalized health tips' },
-      { icon: 'time-outline', text: 'Track your scan history' },
+      { icon: "bar-chart-outline", text: "Scores de probabilité clairs" },
+      { icon: "medical-outline", text: "Conseils santé personnalisés" },
+      { icon: "time-outline", text: "Suivez votre historique de scans" },
     ],
   },
 ];
@@ -91,19 +91,24 @@ export default function OnboardingScreen() {
       if (viewableItems.length > 0 && viewableItems[0].index != null) {
         setCurrentIndex(viewableItems[0].index);
       }
-    }
+    },
   ).current;
 
-  const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
+  const viewabilityConfig = useRef({
+    viewAreaCoveragePercentThreshold: 50,
+  }).current;
 
   async function completeOnboarding() {
-    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-    router.replace('/(auth)/login');
+    await AsyncStorage.setItem(ONBOARDING_KEY, "true");
+    router.replace("/(auth)/login");
   }
 
   function handleNext() {
     if (currentIndex < SLIDES.length - 1) {
-      flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true });
+      flatListRef.current?.scrollToIndex({
+        index: currentIndex + 1,
+        animated: true,
+      });
     } else {
       completeOnboarding();
     }
@@ -139,10 +144,15 @@ export default function OnboardingScreen() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}
+    >
       {/* Skip button */}
       <TouchableOpacity style={styles.skipButton} onPress={completeOnboarding}>
-        <Text style={styles.skipText}>Skip</Text>
+        <Text style={styles.skipText}>Passer</Text>
       </TouchableOpacity>
 
       {/* Slides */}
@@ -157,7 +167,7 @@ export default function OnboardingScreen() {
         showsHorizontalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
+          { useNativeDriver: false },
         )}
         scrollEventThrottle={32}
         onViewableItemsChanged={onViewableItemsChanged}
@@ -178,13 +188,13 @@ export default function OnboardingScreen() {
             const dotWidth = scrollX.interpolate({
               inputRange,
               outputRange: [8, 28, 8],
-              extrapolate: 'clamp',
+              extrapolate: "clamp",
             });
 
             const dotOpacity = scrollX.interpolate({
               inputRange,
               outputRange: [0.3, 1, 0.3],
-              extrapolate: 'clamp',
+              extrapolate: "clamp",
             });
 
             return (
@@ -214,13 +224,21 @@ export default function OnboardingScreen() {
         >
           {currentIndex === SLIDES.length - 1 ? (
             <>
-              <Text style={styles.getStartedText}>Get Started</Text>
-              <Ionicons name="arrow-forward" size={20} color={AppColors.white} />
+              <Text style={styles.getStartedText}>Commencer</Text>
+              <Ionicons
+                name="arrow-forward"
+                size={20}
+                color={AppColors.white}
+              />
             </>
           ) : (
             <>
-              <Text style={styles.nextButtonText}>Next</Text>
-              <Ionicons name="arrow-forward" size={20} color={AppColors.white} />
+              <Text style={styles.nextButtonText}>Suivant</Text>
+              <Ionicons
+                name="arrow-forward"
+                size={20}
+                color={AppColors.white}
+              />
             </>
           )}
         </TouchableOpacity>
@@ -235,7 +253,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white,
   },
   skipButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 60,
     right: 24,
     zIndex: 10,
@@ -246,24 +264,24 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.gray500,
   },
   slide: {
     width,
     paddingHorizontal: 32,
     paddingTop: 80,
-    alignItems: 'center',
+    alignItems: "center",
   },
   iconCircle: {
     width: 130,
     height: 130,
     borderRadius: 65,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 36,
     // Outer glow ring
-    shadowColor: '#0891B2',
+    shadowColor: "#0891B2",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 20,
@@ -273,32 +291,32 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     borderRadius: 55,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   slideTitle: {
     fontSize: 32,
-    fontWeight: '800',
+    fontWeight: "800",
     color: AppColors.gray900,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 40,
     marginBottom: 16,
   },
   slideSubtitle: {
     fontSize: 15,
     color: AppColors.gray500,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 23,
     marginBottom: 32,
     paddingHorizontal: 8,
   },
   featureList: {
-    width: '100%',
+    width: "100%",
     gap: 12,
   },
   featureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 14,
     backgroundColor: AppColors.gray50,
     paddingVertical: 14,
@@ -310,13 +328,13 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 10,
     backgroundColor: AppColors.primaryBg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   featureText: {
     flex: 1,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.gray700,
   },
   bottomContainer: {
@@ -325,9 +343,9 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   pagination: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
   },
   dot: {
@@ -335,9 +353,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   nextButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     backgroundColor: AppColors.primary,
     paddingVertical: 18,
@@ -350,7 +368,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontSize: 17,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.white,
   },
   getStartedButton: {
@@ -359,7 +377,7 @@ const styles = StyleSheet.create({
   },
   getStartedText: {
     fontSize: 17,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.white,
   },
 });

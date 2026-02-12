@@ -330,3 +330,57 @@ export async function getAnalysisHistory(): Promise<HistoryRecord[]> {
 
   return request<HistoryRecord[]>(API_ENDPOINTS.GET_HISTORY);
 }
+
+/** PUT /profile — update firstname/lastname */
+export async function updateProfileApi(
+  firstname: string,
+  lastname: string,
+): Promise<User> {
+  if (USE_MOCK_API) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return { ...MOCK_USER, firstname, lastname };
+  }
+
+  return request<User>(API_ENDPOINTS.PROFILE, {
+    method: "PUT",
+    body: JSON.stringify({ firstname, lastname }),
+  });
+}
+
+/** PUT /change-password */
+export async function changePasswordApi(
+  old_password: string,
+  new_password: string,
+): Promise<{ message: string }> {
+  if (USE_MOCK_API) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return { message: "Mot de passe modifié avec succès" };
+  }
+
+  return request<{ message: string }>(API_ENDPOINTS.CHANGE_PASSWORD, {
+    method: "PUT",
+    body: JSON.stringify({ old_password, new_password }),
+  });
+}
+
+/** GET /export-data */
+export async function exportDataApi(): Promise<any> {
+  if (USE_MOCK_API) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return { user: MOCK_USER, history: MOCK_HISTORY_RECORDS };
+  }
+
+  return request<any>(API_ENDPOINTS.EXPORT_DATA);
+}
+
+/** DELETE /delete-history */
+export async function deleteHistoryApi(): Promise<{ message: string }> {
+  if (USE_MOCK_API) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return { message: "Historique supprimé" };
+  }
+
+  return request<{ message: string }>(API_ENDPOINTS.DELETE_HISTORY, {
+    method: "DELETE",
+  });
+}

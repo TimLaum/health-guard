@@ -3,11 +3,11 @@
  * Bottom tab navigation: Home, Capture, History, Profile
  */
 
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { AppColors } from '@/constants/colors';
+import { Tabs } from "expo-router";
+import React from "react";
+import { View, StyleSheet, Platform } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { AppColors } from "@/constants/colors";
 
 export default function TabLayout() {
   return (
@@ -19,10 +19,10 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: AppColors.white,
           borderTopWidth: 0,
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+          height: Platform.OS === "ios" ? 88 : 64,
+          paddingBottom: Platform.OS === "ios" ? 28 : 8,
           paddingTop: 8,
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.06,
           shadowRadius: 8,
@@ -30,17 +30,17 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: "600",
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: "Accueil",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'home' : 'home-outline'}
+              name={focused ? "home" : "home-outline"}
               size={24}
               color={color}
             />
@@ -50,10 +50,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="capture"
         options={{
-          title: 'Scan',
+          title: "Scan",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'scan' : 'scan-outline'}
+              name={focused ? "scan" : "scan-outline"}
               size={24}
               color={color}
             />
@@ -63,10 +63,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="history"
         options={{
-          title: 'History',
+          title: "Historique",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'time' : 'time-outline'}
+              name={focused ? "time" : "time-outline"}
               size={24}
               color={color}
             />
@@ -76,10 +76,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: "Profil",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? 'person' : 'person-outline'}
+              name={focused ? "person" : "person-outline"}
               size={24}
               color={color}
             />
@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   scanTabActive: {
     backgroundColor: AppColors.primary,

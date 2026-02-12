@@ -3,19 +3,19 @@
  * User guide / documentation tab explaining how to use the app
  */
 
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AppColors } from '@/constants/colors';
+} from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppColors } from "@/constants/colors";
 
 interface GuideStep {
   number: number;
@@ -29,48 +29,48 @@ interface GuideStep {
 const STEPS: GuideStep[] = [
   {
     number: 1,
-    icon: 'scan-outline',
-    title: 'Choose a Scan Type',
+    icon: "scan-outline",
+    title: "Choisir un type de scan",
     description:
-      'From the Home screen, select the type of scan you want to perform: Eye Scan (diabetes indicators), Skin Scan (nutritional deficiencies), or Nail Scan (anemia signs).',
+      "Depuis l'écran d'accueil, sélectionnez le type de scan à effectuer : Scan Oculaire (indicateurs de diabète), Scan Cutané (carences nutritionnelles), ou Scan Ongles (signes d'anémie).",
     color: AppColors.primary,
     bgColor: AppColors.primaryBg,
   },
   {
     number: 2,
-    icon: 'camera-outline',
-    title: 'Capture a Photo',
+    icon: "camera-outline",
+    title: "Prendre une photo",
     description:
-      'Take a clear photo using your camera or select one from your gallery. Make sure the area is well-lit and the image is focused. Follow the on-screen tips for best results.',
+      "Prenez une photo nette avec votre caméra ou sélectionnez-en une depuis votre galerie. Assurez-vous que la zone est bien éclairée et que l'image est nette. Suivez les conseils à l'écran pour de meilleurs résultats.",
     color: AppColors.eyeScan,
-    bgColor: '#F3E8FF',
+    bgColor: "#F3E8FF",
   },
   {
     number: 3,
-    icon: 'analytics-outline',
-    title: 'AI Analysis',
+    icon: "analytics-outline",
+    title: "Analyse par IA",
     description:
-      'Our AI-powered system analyzes your photo using TensorFlow Lite models trained on medical datasets. The analysis takes just a few seconds.',
+      "Notre système d'IA analyse votre photo à l'aide de modèles TensorFlow Lite entraînés sur des jeux de données médicales. L'analyse ne prend que quelques secondes.",
     color: AppColors.skinScan,
-    bgColor: '#FFF7ED',
+    bgColor: "#FFF7ED",
   },
   {
     number: 4,
-    icon: 'document-text-outline',
-    title: 'View Results',
+    icon: "document-text-outline",
+    title: "Voir les résultats",
     description:
-      'Get a detailed report with the detected condition, confidence score, severity level, and personalized health recommendations.',
+      "Obtenez un rapport détaillé avec la condition détectée, le score de confiance, le niveau de sévérité et des recommandations de santé personnalisées.",
     color: AppColors.nailScan,
-    bgColor: '#FDF2F8',
+    bgColor: "#FDF2F8",
   },
   {
     number: 5,
-    icon: 'time-outline',
-    title: 'Track Your History',
+    icon: "time-outline",
+    title: "Suivre votre historique",
     description:
-      'All your scans are saved in the History tab. Monitor changes over time and share results with your healthcare provider.',
+      "Tous vos scans sont sauvegardés dans l'onglet Historique. Surveillez les changements au fil du temps et partagez les résultats avec votre médecin.",
     color: AppColors.success,
-    bgColor: '#ECFDF5',
+    bgColor: "#ECFDF5",
   },
 ];
 
@@ -81,34 +81,34 @@ interface FAQItem {
 
 const FAQS: FAQItem[] = [
   {
-    question: 'Is this a medical diagnosis?',
+    question: "Est-ce un diagnostic médical ?",
     answer:
-      'No. HealthGuard Vision is a screening assistance tool. It uses AI to identify potential health indicators but does NOT provide medical diagnoses. Always consult a qualified healthcare professional for proper evaluation.',
+      "Non. HealthGuard Vision est un outil d'aide au dépistage. Il utilise l'IA pour identifier des indicateurs de santé potentiels mais NE fournit PAS de diagnostic médical. Consultez toujours un professionnel de santé qualifié pour une évaluation complète.",
   },
   {
-    question: 'How accurate are the results?',
+    question: "Quelle est la précision des résultats ?",
     answer:
-      'Our AI models have been trained on medical datasets and provide a confidence score with each analysis. While accuracy varies by condition, results should be used as preliminary screening indicators, not definitive conclusions.',
+      "Nos modèles d'IA ont été entraînés sur des jeux de données médicales et fournissent un score de confiance avec chaque analyse. Bien que la précision varie selon la condition, les résultats doivent être utilisés comme indicateurs de dépistage préliminaires, pas comme des conclusions définitives.",
   },
   {
-    question: 'Is my health data secure?',
+    question: "Mes données de santé sont-elles sécurisées ?",
     answer:
-      'Yes. All data is encrypted in transit and at rest. We follow HIPAA compliance standards. Your images and results are private and never shared with third parties. You can delete your data at any time.',
+      "Oui. Toutes les données sont chiffrées en transit et au repos. Nous respectons les normes de conformité HIPAA. Vos images et résultats sont privés et jamais partagés avec des tiers. Vous pouvez supprimer vos données à tout moment.",
   },
   {
-    question: 'What conditions can the app detect?',
+    question: "Quelles conditions l'application peut-elle détecter ?",
     answer:
-      '• Eye Scan: Diabetic retinopathy indicators\n• Skin Scan: Vitamin D and nutritional deficiency signs\n• Nail Scan: Iron deficiency / anemia indicators',
+      "• Scan Oculaire : Indicateurs de rétinopathie diabétique\n• Scan Cutané : Signes de carence en vitamine D et nutritionnelles\n• Scan Ongles : Indicateurs de carence en fer / anémie",
   },
   {
-    question: 'How should I take the photos?',
+    question: "Comment prendre les photos ?",
     answer:
-      '• Use natural or bright, even lighting\n• Keep the camera steady and focused\n• Eye: Look straight at the camera\n• Skin: Capture the area from 15–20 cm away\n• Nails: Place hand on a flat surface, remove nail polish',
+      "• Utilisez un éclairage naturel ou vif et uniforme\n• Gardez la caméra stable et bien focalisée\n• Yeux : Regardez droit vers la caméra\n• Peau : Capturez la zone à 15–20 cm\n• Ongles : Placez la main sur une surface plane, retirez le vernis",
   },
   {
-    question: 'Can I delete my data?',
+    question: "Puis-je supprimer mes données ?",
     answer:
-      'Yes. Go to Profile → Delete All Data to remove your scan history. To delete your account entirely, contact our support team. All data is permanently removed within 30 days.',
+      "Oui. Allez dans Profil → Supprimer toutes les données pour effacer votre historique de scans. Pour supprimer entièrement votre compte, contactez notre équipe support. Toutes les données sont définitivement supprimées sous 30 jours.",
   },
 ];
 
@@ -127,26 +127,32 @@ export default function GuideScreen() {
       <View style={styles.header}>
         <View style={styles.headerIcon}>
           <Image
-            source={require('@/assets/images/logo.png')}
+            source={require("@/assets/images/logo.png")}
             style={{ width: 40, height: 40 }}
             contentFit="contain"
           />
         </View>
         <View>
-          <Text style={styles.headerTitle}>User Guide</Text>
-          <Text style={styles.headerSubtitle}>Learn how to use HealthGuard</Text>
+          <Text style={styles.headerTitle}>Guide d'utilisation</Text>
+          <Text style={styles.headerSubtitle}>
+            Apprenez à utiliser HealthGuard
+          </Text>
         </View>
       </View>
 
       {/* How It Works */}
-      <Text style={styles.sectionTitle}>How It Works</Text>
-      <Text style={styles.sectionSubtitle}>Follow these simple steps</Text>
+      <Text style={styles.sectionTitle}>Comment ça marche</Text>
+      <Text style={styles.sectionSubtitle}>Suivez ces étapes simples</Text>
 
       {STEPS.map((step) => (
         <View key={step.number} style={styles.stepCard}>
           <View style={styles.stepLeft}>
-            <View style={[styles.stepNumber, { backgroundColor: step.bgColor }]}>
-              <Text style={[styles.stepNumberText, { color: step.color }]}>{step.number}</Text>
+            <View
+              style={[styles.stepNumber, { backgroundColor: step.bgColor }]}
+            >
+              <Text style={[styles.stepNumberText, { color: step.color }]}>
+                {step.number}
+              </Text>
             </View>
             {step.number < STEPS.length && <View style={styles.stepLine} />}
           </View>
@@ -161,34 +167,61 @@ export default function GuideScreen() {
       ))}
 
       {/* Scan Types */}
-      <Text style={[styles.sectionTitle, { marginTop: 12 }]}>Scan Types</Text>
+      <Text style={[styles.sectionTitle, { marginTop: 12 }]}>
+        Types de scan
+      </Text>
 
       <View style={styles.scanTypesRow}>
-        <View style={[styles.scanTypeCard, { borderColor: AppColors.eyeScan + '40' }]}>
-          <View style={[styles.scanTypeIcon, { backgroundColor: '#F3E8FF' }]}>
+        <View
+          style={[
+            styles.scanTypeCard,
+            { borderColor: AppColors.eyeScan + "40" },
+          ]}
+        >
+          <View style={[styles.scanTypeIcon, { backgroundColor: "#F3E8FF" }]}>
             <Ionicons name="eye-outline" size={26} color={AppColors.eyeScan} />
           </View>
-          <Text style={styles.scanTypeName}>Eye</Text>
-          <Text style={styles.scanTypeDetects}>Diabetes</Text>
+          <Text style={styles.scanTypeName}>Yeux</Text>
+          <Text style={styles.scanTypeDetects}>Diabète</Text>
         </View>
-        <View style={[styles.scanTypeCard, { borderColor: AppColors.skinScan + '40' }]}>
-          <View style={[styles.scanTypeIcon, { backgroundColor: '#FFF7ED' }]}>
-            <Ionicons name="body-outline" size={26} color={AppColors.skinScan} />
+        <View
+          style={[
+            styles.scanTypeCard,
+            { borderColor: AppColors.skinScan + "40" },
+          ]}
+        >
+          <View style={[styles.scanTypeIcon, { backgroundColor: "#FFF7ED" }]}>
+            <Ionicons
+              name="body-outline"
+              size={26}
+              color={AppColors.skinScan}
+            />
           </View>
-          <Text style={styles.scanTypeName}>Skin</Text>
-          <Text style={styles.scanTypeDetects}>Deficiencies</Text>
+          <Text style={styles.scanTypeName}>Peau</Text>
+          <Text style={styles.scanTypeDetects}>Carences</Text>
         </View>
-        <View style={[styles.scanTypeCard, { borderColor: AppColors.nailScan + '40' }]}>
-          <View style={[styles.scanTypeIcon, { backgroundColor: '#FDF2F8' }]}>
-            <Ionicons name="hand-left-outline" size={26} color={AppColors.nailScan} />
+        <View
+          style={[
+            styles.scanTypeCard,
+            { borderColor: AppColors.nailScan + "40" },
+          ]}
+        >
+          <View style={[styles.scanTypeIcon, { backgroundColor: "#FDF2F8" }]}>
+            <Ionicons
+              name="hand-left-outline"
+              size={26}
+              color={AppColors.nailScan}
+            />
           </View>
-          <Text style={styles.scanTypeName}>Nail</Text>
-          <Text style={styles.scanTypeDetects}>Anemia</Text>
+          <Text style={styles.scanTypeName}>Ongles</Text>
+          <Text style={styles.scanTypeDetects}>Anémie</Text>
         </View>
       </View>
 
       {/* FAQ */}
-      <Text style={[styles.sectionTitle, { marginTop: 12 }]}>Frequently Asked Questions</Text>
+      <Text style={[styles.sectionTitle, { marginTop: 12 }]}>
+        Questions fréquentes
+      </Text>
 
       {FAQS.map((faq, index) => (
         <TouchableOpacity
@@ -200,7 +233,7 @@ export default function GuideScreen() {
           <View style={styles.faqHeader}>
             <Text style={styles.faqQuestion}>{faq.question}</Text>
             <Ionicons
-              name={expandedFaq === index ? 'chevron-up' : 'chevron-down'}
+              name={expandedFaq === index ? "chevron-up" : "chevron-down"}
               size={18}
               color={AppColors.gray400}
             />
@@ -215,27 +248,47 @@ export default function GuideScreen() {
       <View style={styles.noticeCard}>
         <Ionicons name="warning-outline" size={22} color={AppColors.warning} />
         <View style={styles.noticeContent}>
-          <Text style={styles.noticeTitle}>Important Disclaimer</Text>
+          <Text style={styles.noticeTitle}>Avertissement important</Text>
           <Text style={styles.noticeText}>
-            HealthGuard Vision is an AI-assisted screening tool. It does not replace professional medical
-            advice, diagnosis, or treatment. Always seek the advice of your physician or qualified health
-            provider with any questions regarding a medical condition.
+            HealthGuard Vision est un outil de dépistage assisté par IA. Il ne
+            remplace pas les conseils médicaux professionnels, le diagnostic ou
+            le traitement. Consultez toujours l'avis de votre médecin ou d'un
+            professionnel de santé qualifié pour toute question concernant une
+            condition médicale.
           </Text>
         </View>
       </View>
 
       {/* Quick Links */}
       <View style={styles.linksCard}>
-        <Text style={styles.linksTitle}>Quick Links</Text>
-        <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(legal)/terms')}>
-          <Ionicons name="document-text-outline" size={18} color={AppColors.primary} />
-          <Text style={styles.linkText}>Terms & Conditions</Text>
-          <Ionicons name="chevron-forward" size={16} color={AppColors.gray300} />
+        <Text style={styles.linksTitle}>Liens rapides</Text>
+        <TouchableOpacity
+          style={styles.linkRow}
+          onPress={() => router.push("/(legal)/terms")}
+        >
+          <Ionicons
+            name="document-text-outline"
+            size={18}
+            color={AppColors.primary}
+          />
+          <Text style={styles.linkText}>Conditions d'utilisation</Text>
+          <Ionicons
+            name="chevron-forward"
+            size={16}
+            color={AppColors.gray300}
+          />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.linkRow} onPress={() => router.push('/(legal)/privacy')}>
+        <TouchableOpacity
+          style={styles.linkRow}
+          onPress={() => router.push("/(legal)/privacy")}
+        >
           <Ionicons name="shield-outline" size={18} color={AppColors.primary} />
-          <Text style={styles.linkText}>Privacy Policy</Text>
-          <Ionicons name="chevron-forward" size={16} color={AppColors.gray300} />
+          <Text style={styles.linkText}>Politique de confidentialité</Text>
+          <Ionicons
+            name="chevron-forward"
+            size={16}
+            color={AppColors.gray300}
+          />
         </TouchableOpacity>
       </View>
 
@@ -253,8 +306,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 14,
     marginBottom: 28,
   },
@@ -263,18 +316,18 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 16,
     backgroundColor: AppColors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   headerTitle: {
     fontSize: 26,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
   },
   headerSubtitle: {
@@ -284,7 +337,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 4,
   },
@@ -294,11 +347,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   stepCard: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 4,
   },
   stepLeft: {
-    alignItems: 'center',
+    alignItems: "center",
     width: 40,
     marginRight: 14,
   },
@@ -306,12 +359,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   stepNumberText: {
     fontSize: 15,
-    fontWeight: '800',
+    fontWeight: "800",
   },
   stepLine: {
     width: 2,
@@ -325,7 +378,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
@@ -335,13 +388,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 10,
   },
   stepTitle: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 4,
   },
@@ -351,18 +404,18 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   scanTypesRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
     marginTop: 12,
   },
   scanTypeCard: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: AppColors.white,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1.5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
@@ -372,13 +425,13 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 8,
   },
   scanTypeName: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
   },
   scanTypeDetects: {
@@ -391,21 +444,21 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 16,
     marginBottom: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 1,
   },
   faqHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   faqQuestion: {
     flex: 1,
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.gray900,
     marginRight: 8,
   },
@@ -419,22 +472,22 @@ const styles = StyleSheet.create({
     borderTopColor: AppColors.gray100,
   },
   noticeCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 12,
-    backgroundColor: '#FFFBEB',
+    backgroundColor: "#FFFBEB",
     borderRadius: 16,
     padding: 16,
     marginTop: 16,
     borderWidth: 1,
-    borderColor: '#FEF3C7',
+    borderColor: "#FEF3C7",
   },
   noticeContent: {
     flex: 1,
   },
   noticeTitle: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 4,
   },
@@ -448,7 +501,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginTop: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 4,
@@ -456,13 +509,13 @@ const styles = StyleSheet.create({
   },
   linksTitle: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
     color: AppColors.gray900,
     marginBottom: 12,
   },
   linkRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     paddingVertical: 12,
     borderTopWidth: 1,
@@ -471,7 +524,7 @@ const styles = StyleSheet.create({
   linkText: {
     flex: 1,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: AppColors.gray700,
   },
 });

@@ -23,6 +23,11 @@ export const API_ENDPOINTS = {
   UPLOAD_IMAGE: "/predict",
   GET_HISTORY: "/histories",
 
+  // Profile management
+  CHANGE_PASSWORD: "/change-password",
+  EXPORT_DATA: "/export-data",
+  DELETE_HISTORY: "/delete-history",
+
   // Health
   HEALTH_CHECK: "/health",
 };

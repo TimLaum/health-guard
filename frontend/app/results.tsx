@@ -30,19 +30,19 @@ const { width } = Dimensions.get("window");
 const TYPE_CONFIG = {
   eye: {
     icon: "eye-outline" as const,
-    label: "Eye Analysis",
+    label: "Analyse Oculaire",
     color: AppColors.eyeScan,
     bgColor: "#F3E8FF",
   },
   skin: {
     icon: "body-outline" as const,
-    label: "Skin Analysis",
+    label: "Analyse Cutanée",
     color: AppColors.skinScan,
     bgColor: "#FFF7ED",
   },
   nail: {
     icon: "hand-left-outline" as const,
-    label: "Nail Analysis",
+    label: "Analyse Ongles",
     color: AppColors.nailScan,
     bgColor: "#FDF2F8",
   },
@@ -50,19 +50,19 @@ const TYPE_CONFIG = {
 
 const SEVERITY_CONFIG = {
   severe: {
-    label: "Severe",
+    label: "Sévère",
     color: AppColors.danger,
     bg: "#FEF2F2",
     icon: "warning" as const,
   },
   moderate: {
-    label: "Moderate",
+    label: "Modéré",
     color: AppColors.warning,
     bg: "#FFFBEB",
     icon: "alert-circle" as const,
   },
   light: {
-    label: "Light",
+    label: "Léger",
     color: "#F59E0B",
     bg: "#FFFBEB",
     icon: "alert-circle" as const,
@@ -81,7 +81,7 @@ function getSeverityConfig(severity: string | null, status?: string) {
   }
   if (status === "elevated") {
     return {
-      label: "Elevated",
+      label: "Élevé",
       color: AppColors.warning,
       bg: "#FFFBEB",
       icon: "alert-circle" as const,
@@ -165,14 +165,14 @@ export default function ResultsScreen() {
           color={AppColors.gray300}
         />
         <Text style={{ marginTop: 12, fontSize: 16, color: AppColors.gray600 }}>
-          Result not found
+          Résultat introuvable
         </Text>
         <TouchableOpacity
           style={{ marginTop: 20 }}
           onPress={() => router.back()}
         >
           <Text style={{ color: AppColors.primary, fontWeight: "700" }}>
-            Go Back
+            Retour
           </Text>
         </TouchableOpacity>
       </View>
@@ -207,13 +207,13 @@ export default function ResultsScreen() {
                 {result.primary_diagnosis}
               </Text>
               <Text style={styles.confidenceText}>
-                Confidence: {result.confidence}%
+                Confiance : {result.confidence}%
               </Text>
             </View>
           </View>
 
           {/* All Predictions */}
-          <Text style={styles.sectionLabel}>Top Predictions</Text>
+          <Text style={styles.sectionLabel}>Prédictions principales</Text>
           {result.predictions.map((pred, index) => (
             <View key={index} style={styles.predictionRow}>
               <View style={styles.predRank}>
@@ -254,13 +254,13 @@ export default function ResultsScreen() {
           </View>
 
           {/* Message */}
-          <Text style={styles.sectionLabel}>Diagnosis</Text>
+          <Text style={styles.sectionLabel}>Diagnostic</Text>
           <Text style={styles.messageText}>{result.message}</Text>
 
           {/* Hemoglobin Level */}
           <View style={styles.hbContainer}>
             <Ionicons name="water" size={20} color={AppColors.primary} />
-            <Text style={styles.hbLabel}>Hemoglobin Level</Text>
+            <Text style={styles.hbLabel}>Taux d'hémoglobine</Text>
             <Text style={styles.hbValue}>{result.hb_level}</Text>
           </View>
         </View>
@@ -286,18 +286,18 @@ export default function ResultsScreen() {
                 {config.label}
               </Text>
               <Text style={styles.confidenceText}>
-                {new Date(record.created_at).toLocaleDateString()}
+                {new Date(record.created_at).toLocaleDateString("fr-FR")}
               </Text>
             </View>
           </View>
 
-          <Text style={styles.sectionLabel}>Result</Text>
+          <Text style={styles.sectionLabel}>Résultat</Text>
           <Text style={styles.messageText}>{record.message}</Text>
 
           {record.hb_level ? (
             <View style={styles.hbContainer}>
               <Ionicons name="water" size={20} color={AppColors.primary} />
-              <Text style={styles.hbLabel}>Hemoglobin Level</Text>
+              <Text style={styles.hbLabel}>Taux d'hémoglobine</Text>
               <Text style={styles.hbValue}>{record.hb_level}</Text>
             </View>
           ) : null}
@@ -313,7 +313,7 @@ export default function ResultsScreen() {
       <View style={styles.recommendationsCard}>
         <View style={styles.recommendationsHeader}>
           <Ionicons name="medical" size={22} color={AppColors.primary} />
-          <Text style={styles.recommendationsTitle}>Recommendations</Text>
+          <Text style={styles.recommendationsTitle}>Recommandations</Text>
         </View>
 
         {recommendations.map((rec, index) => (
@@ -367,9 +367,9 @@ export default function ResultsScreen() {
       <View style={styles.disclaimer}>
         <Ionicons name="warning-outline" size={18} color={AppColors.warning} />
         <Text style={styles.disclaimerText}>
-          This is an AI-assisted screening tool and not a medical diagnosis.
-          Always consult a qualified healthcare professional for proper
-          evaluation and treatment.
+          Ceci est un outil de dépistage assisté par IA et non un diagnostic
+          médical. Consultez toujours un professionnel de santé qualifié pour
+          une évaluation et un traitement adaptés.
         </Text>
       </View>
 
@@ -380,7 +380,7 @@ export default function ResultsScreen() {
           onPress={() => router.replace("/(tabs)")}
         >
           <Ionicons name="home-outline" size={20} color={AppColors.white} />
-          <Text style={styles.primaryActionText}>Back to Home</Text>
+          <Text style={styles.primaryActionText}>Retour à l'accueil</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -388,7 +388,7 @@ export default function ResultsScreen() {
           onPress={() => router.replace("/(tabs)/capture")}
         >
           <Ionicons name="scan-outline" size={20} color={AppColors.primary} />
-          <Text style={styles.secondaryActionText}>New Scan</Text>
+          <Text style={styles.secondaryActionText}>Nouveau scan</Text>
         </TouchableOpacity>
       </View>
 

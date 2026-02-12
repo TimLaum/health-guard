@@ -89,7 +89,7 @@ jobs:
       - name: Run Tests with Coverage
         run: |
           cd backend
-          pytest test_predict.py -v --cov=app --cov-report=xml --cov-report=term
+          pytest predict.py -v --cov=app --cov-report=xml --cov-report=term
       
       - name: Upload Coverage to Codecov
         if: matrix.python-version == '3.11'

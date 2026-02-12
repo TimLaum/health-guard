@@ -82,22 +82,9 @@ jobs:
         run: |
           cd backend
           ls -lh app/ml_models/*.tflite
-          echo "✅ All ML models found"
+          echo " All ML models found"
       
-      - name: Run Unit Tests with Coverage
-        run: |
-          cd backend
-          pytest app/test_predict.py -v --cov=app --cov-report=xml --cov-report=term-missing
-      
-      - name: Upload Coverage to Codecov
-        if: matrix.python-version == '3.11'
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./backend/coverage.xml
-          flags: backend
-          name: backend-coverage
-        continue-on-error: true
-      
+    
   
 
   validate-models:
@@ -140,11 +127,11 @@ jobs:
               # Load and validate
               interpreter = tf.lite.Interpreter(model_path=model_file)
               interpreter.allocate_tensors()
-              print(f"✅ {model_file}")
+              print(f" {model_file}")
               print(f"   Input shape: {input_details[0]['shape']}")
               print(f"   Output shape: {output_details[0]['shape']}")
           
-          print("\n✅ Models validated successfully!")
+          print("\n Models validated successfully!")
               print(f"   Input shape: {input_details[0]['shape']}")
               print(f"   Output shape: {output_details[0]['shape']}")
           

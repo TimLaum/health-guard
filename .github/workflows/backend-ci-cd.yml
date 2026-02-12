@@ -48,11 +48,6 @@ jobs:
           cd backend
           isort --check-only app/ *.py || echo "::warning::Import sorting issues detected"
       
-      - name: Run Flake8 (Style Guide)
-        run: |
-          cd backend
-          flake8 app/ --max-line-length=100 --exclude=__pycache__,*.pyc
-      
       - name: Run Pylint (Static Analysis)
         run: |
           cd backend

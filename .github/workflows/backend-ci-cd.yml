@@ -131,7 +131,7 @@ jobs:
               print(f"Input shape: {input_details[0]['shape']}")
               print(f"Output shape: {output_details[0]['shape']}")
           
-          print("\n Models validated successfully!")
+              print("\n Models validated successfully!")
               print(f"Input shape: {input_details[0]['shape']}")
               print(f"Output shape: {output_details[0]['shape']}")
           

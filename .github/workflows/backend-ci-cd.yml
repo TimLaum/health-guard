@@ -1,0 +1,169 @@
+name: Backend CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/**'
+
+env:
+  PYTHON_VERSION: '3.11'
+  DOCKER_IMAGE: healthguard-backend
+  
+jobs:
+
+  code-quality:
+    name:  Code Quality Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          cd backend 
+          pip install --upgrade pip
+          pip install pylint isort black flake8
+          pip install -r requirements.txt
+      
+      - name: Run Black (Code Formatter)
+        run: |
+          cd backend
+          black --check app/ *.py || echo "::warning::Code formatting issues detected"
+      
+      - name: Run isort (Import Sorting)
+        run: |
+          cd backend
+          isort --check-only app/ *.py || echo "::warning::Import sorting issues detected"
+      
+      - name: Run Pylint (Static Analysis)
+        run: |
+          cd backend
+          pylint app/ --disable=C0111,R0903,C0103 --max-line-length=100 || true
+
+
+  test:
+    name:  Run Tests
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    strategy:
+      matrix:
+        python-version: ['3.11']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-flask
+      
+      - name: Check ML Models exist
+        run: |
+          cd backend
+          ls -lh app/ml_models/*.tflite
+          echo " All ML models found"
+      
+    
+  
+
+  validate-models:
+    name:  Validate ML Models
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      
+      - name: Install TensorFlow Lite
+        run: |
+          pip install tensorflow numpy pillow
+      
+      - name: Validate Model Files
+        run: |
+          cd backend/app/ml_models
+          python3 << EOF
+          import tensorflow as tf
+          import os
+          
+          models = [
+              'best_skin_disease_model.tflite',
+              'eye_anemia_model.tflite',
+              'nail_anemia_model.tflite'
+          ]
+          
+          for model_file in models:
+              if not os.path.exists(model_file):
+                  print(f"Missing: {model_file}")
+                  exit(1)
+              
+              # Load and validate
+              interpreter = tf.lite.Interpreter(model_path=model_file)
+              interpreter.allocate_tensors()
+              input_details = interpreter.get_input_details()
+              output_details = interpreter.get_output_details()
+              print(f"{model_file}")
+              print(f"Input shape: {input_details[0]['shape']}")
+              print(f"Output shape: {output_details[0]['shape']}")
+          
+              print("\n Models validated successfully!")
+              print(f"Input shape: {input_details[0]['shape']}")
+              print(f"Output shape: {output_details[0]['shape']}")
+          
+          print("\n Models validated successfully!")
+          EOF
+
+  security-scan:
+    name: Security Vulnerabilities Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Install Safety
+        run: pip install safety bandit
+      
+      - name: Check for vulnerabilities (Safety)
+        run: |
+          cd backend
+          safety check --file requirements.txt --output text || true
+      
+      - name: Run Bandit (Security Linter)
+        run: |
+          cd backend
+          bandit -r app/ -ll -f json -o bandit-report.json || true
+          bandit -r app/ -ll
+

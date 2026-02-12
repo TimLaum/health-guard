@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { AppColors } from "@/constants/colors";
+import React from "react";
 
 const ONBOARDING_KEY = "healthguard_onboarding_done";
 

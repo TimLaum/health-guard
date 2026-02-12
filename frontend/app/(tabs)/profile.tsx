@@ -300,25 +300,6 @@ export default function ProfileScreen() {
         </View>
         <Text style={styles.name}>{displayName}</Text>
         <Text style={styles.email}>{displayEmail}</Text>
-
-        <View style={styles.statsRow}>
-          <View style={styles.stat}>
-            <Text style={styles.statNumber}>{scanCount}</Text>
-            <Text style={styles.statLabel}>Scans</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <Text style={styles.statNumber}>{monthCount}</Text>
-            <Text style={styles.statLabel}>Mois</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.stat}>
-            <Text style={[styles.statNumber, { color: AppColors.success }]}>
-              Bon
-            </Text>
-            <Text style={styles.statLabel}>Statut</Text>
-          </View>
-        </View>
       </View>
 
       {/* Menu Sections */}

@@ -13,7 +13,7 @@ import json
 from PIL import Image
 from typing import Dict, Tuple, Optional, List
 
-# Obtenir le chemin du répertoire de ce script
+# Obtenir le chemin du répertoire de ce script 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -315,8 +315,6 @@ def get_analyzer() -> MedicalAnalyzer:
         _analyzer = MedicalAnalyzer()
     return _analyzer
 
-
-# Fonctions legacy pour compatibilité avec l'ancienne API
 def analyze_nail_image(image_path: str, sexe: str) -> Dict:
     """
     Fonction legacy pour l'analyse d'ongle (compatibilité)

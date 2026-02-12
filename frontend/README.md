@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo.png" alt="HealthGuard Vision Logo" width="140" />
+<img src="assets/images/logo.png" alt="HealthGuard Vision Logo" width="140" />
 
 # HealthGuard Vision
 
@@ -23,6 +23,7 @@
 ---
 
 ## 📋 About
+
 **HealthGuard Vision** is a mobile health screening application that uses **artificial intelligence** to analyze photographs of eyes, skin, and nails — detecting early indicators of **diabetes**, **nutritional deficiencies**, and **anemia**.
 
 > ⚠️ **Disclaimer**: This is an AI-assisted screening tool developed for academic purposes. It does **not** provide medical diagnoses. Always consult a qualified healthcare professional.
@@ -79,15 +80,10 @@ health-guard/
 │   ├── constants/           ← Colors, API config
 │   └── assets/              ← Logo & app icons
 │
-├── 🖥️ backend/              ← Flask REST API
-│   ├── app/                 ← Application code
-│   │   ├── ml_models/       ← TensorFlow Lite models
-│   │   ├── routes.py        ← API endpoints
-│   │   ├── services.py      ← Business logic
-│   │   ├── predict.py       ← ML prediction logic
-│   │   └── db.py            ← Database connection
-│   ├── run.py               ← Server entry point
-│   └── requirements.txt     ← Python dependencies
+├── 🖥️ backend/              ← Flask REST API (coming soon)
+│   ├── routes/              ← Auth, Analysis endpoints
+│   ├── models/              ← Database models
+│   └── config/              ← JWT, DB, CORS config
 │
 └── 🤖 ai-ml/                ← AI/ML Models (coming soon)
     ├── models/              ← TensorFlow / PyTorch models
@@ -165,12 +161,9 @@ health-guard/
 ### Prerequisites
 
 - **Node.js** ≥ 20 ([install via nvm](https://github.com/nvm-sh/nvm))
-- **Python** ≥ 3.8 (for backend)
 - **Expo Go** app on your phone ([Android](https://play.google.com/store/apps/details?id=host.exp.exponent) / [iOS](https://apps.apple.com/app/expo-go/id982107779))
 
 ### Installation
-
-#### Mobile App
 
 ```bash
 # Clone the repository
@@ -183,23 +176,6 @@ npm install
 
 # Start the development server
 npx expo start
-```
-
-#### Backend API
-
-```bash
-# Navigate to backend directory
-cd backend
-
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the Flask server
-python run.py
 ```
 
 ### Running on Device
@@ -265,7 +241,7 @@ The app uses a **medical-themed color palette** built for trust and clarity:
 |------|--------|---------------|
 | 📱 **Mobile App** | [@Mohamedsellak](https://github.com/Mohamedsellak) | React Native / Expo frontend |
 | 🖥️ **Backend** | TBD | Flask API & database |
-| 🤖 **AI/ML** | [@0xCorentin](https://github.com/0xCorentin) | Model training & inference |
+| 🤖 **AI/ML** | TBD | Model training & inference |
 
 ---
 
@@ -278,6 +254,8 @@ This project is developed as part of an **M1 academic project** (2025–2026).
 <div align="center">
 
 **Built with ❤️ for better health awareness**
+
+<img src="HealthGuard/assets/images/logo.png" alt="HealthGuard" width="48" />
 
 *HealthGuard Vision — Diagnostic Préventif par Image*
 

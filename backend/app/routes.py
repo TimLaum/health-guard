@@ -3,8 +3,8 @@ from app.db import authenticate_user, create_history_entry, create_user, get_all
 from flask import Blueprint, request, jsonify
 from .services import analyze_image
 import os
+import traceback
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from bson.binary import Binary  # Add this import
 
 main_bp = Blueprint('main', __name__)
 
@@ -63,9 +63,19 @@ def predict():
         result = analyze_image(file, analysis_type, user['sex'])
         if not result:
             return jsonify({"error": "Analyse échouée, résultat vide"}), 500
-        create_history_entry(user['_id'], analysis_type, result)
+
+        # Extract message and hb_level for history
+        if analysis_type == 'skin':
+            message = result.get('primary_diagnosis', '')
+            hb_level = None
+        else:
+            message = result.get('message', '')
+            hb_level = result.get('hb_level')
+
+        create_history_entry(user['_id'], analysis_type, message, hb_level)
         return jsonify(result), 200
     except Exception as e:
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     
 
@@ -84,19 +94,41 @@ def authenticate():
     return jsonify({"token": access_token}), 200
     
 
+@main_bp.route('/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+    current_user = get_jwt_identity()
+    user = get_user_by_email(current_user)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    return jsonify(user), 200
+
+
 @main_bp.route('/users', methods=['GET'])
 @jwt_required()
 def get_users():
     users = get_all_users()
     return jsonify(users), 200
 
-@main_bp.route('/history', methods=['GET'])
+@main_bp.route('/histories', methods=['GET'])
 @jwt_required()
-def get_history():
+def fetch_history():
     current_user = get_jwt_identity()
     user = get_user_by_email(current_user)
     if not user:
         return jsonify({"error": "User not found"}), 404
 
     history = get_patient_history(user['_id'])
+    return jsonify(history), 200
+
+
+@main_bp.route('/history/<user_id>', methods=['GET'])
+@jwt_required()
+def get_history(user_id):
+    current_user = get_jwt_identity()
+    user = get_user_by_email(current_user)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    history = get_patient_history(user_id)
     return jsonify(history), 200

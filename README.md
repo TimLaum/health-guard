@@ -1,60 +1,63 @@
 <div align="center">
 
-<img src="logo.png" alt="HealthGuard Vision Logo" width="140" />
+# 🩺 HealthGuard Vision
 
-# HealthGuard Vision
+### Diagnostic Préventif par Image
 
-### 🩺 Diagnostic Préventif par Image
+*Application mobile de dépistage de santé par intelligence artificielle*
 
-*AI-powered preventive health screening through image analysis*
+<br/>
 
 [![React Native](https://img.shields.io/badge/React_Native-0.81.5-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://reactnative.dev/)
 [![Expo](https://img.shields.io/badge/Expo_SDK_54-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Flask](https://img.shields.io/badge/Flask-API-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-ML-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.3-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow_Lite-ML-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
----
+<br/>
 
-**M1 Academic Project** · University 2025–2026
+**Projet M1** · Année Universitaire 2025–2026
 
 </div>
 
 ---
 
-## 📋 About
-**HealthGuard Vision** is a mobile health screening application that uses **artificial intelligence** to analyze photographs of eyes, skin, and nails — detecting early indicators of **diabetes**, **nutritional deficiencies**, and **anemia**.
+## 📋 À propos
 
-> ⚠️ **Disclaimer**: This is an AI-assisted screening tool developed for academic purposes. It does **not** provide medical diagnoses. Always consult a qualified healthcare professional.
+**HealthGuard Vision** est une application mobile de dépistage préventif qui utilise l'**intelligence artificielle** pour analyser des photographies d'yeux, de peau et d'ongles — détectant des indicateurs précoces de **diabète**, **carences nutritionnelles** et **anémie**.
+
+> ⚠️ **Avertissement** : Cet outil est développé dans un cadre académique. Il ne fournit **pas** de diagnostic médical. Consultez toujours un professionnel de santé qualifié.
 
 ---
 
-## 🔬 What It Detects
+## 🔬 Analyses disponibles
 
 <table>
 <tr>
 <td align="center" width="33%">
 
-### 👁️ Eye Scan
-**Diabetic Retinopathy**
+### 👁️ Scan Oculaire
+**Rétinopathie Diabétique**
 
-Analyzes retinal images to detect microaneurysms, hemorrhages, and exudates — early signs of diabetes-related eye damage.
-
-</td>
-<td align="center" width="33%">
-
-### 🖐️ Skin Scan
-**Nutritional Deficiencies**
-
-Examines skin tone, texture, and color patterns to identify possible Vitamin D, B12, and zinc deficiency indicators.
+Analyse les images rétiniennes pour détecter micro-anévrismes, hémorragies et exsudats — signes précoces de complications diabétiques.
 
 </td>
 <td align="center" width="33%">
 
-### 💅 Nail Scan
-**Anemia Detection**
+### 🖐️ Scan Cutané
+**Carences Nutritionnelles**
 
-Analyzes nail bed color, shape (spoon nails), and ridges to detect potential iron deficiency and anemia signs.
+Examine la teinte, la texture et les patterns colorés de la peau pour identifier des carences possibles en vitamine D, B12 et zinc.
+
+</td>
+<td align="center" width="33%">
+
+### 💅 Scan Unguéal
+**Détection d'Anémie**
+
+Analyse la couleur du lit unguéal, la forme (ongles en cuillère) et les stries pour détecter une carence en fer et l'anémie.
 
 </td>
 </tr>
@@ -62,222 +65,253 @@ Analyzes nail bed color, shape (spoon nails), and ridges to detect potential iro
 
 ---
 
-## 🏗️ Project Architecture
+## 🏗️ Architecture du Projet
 
 ```
 health-guard/
 │
-├── 📱 HealthGuard/          ← Mobile App (React Native / Expo)
-│   ├── app/                 ← Screens & navigation (expo-router)
-│   │   ├── (auth)/          ← Login, Sign Up, Forgot Password
-│   │   ├── (tabs)/          ← Home, Camera, History, Profile
-│   │   ├── (legal)/         ← Terms of Service, Privacy Policy
-│   │   ├── guide.tsx        ← User Guide & FAQ
-│   │   └── results.tsx      ← AI Analysis Results
-│   ├── contexts/            ← Auth context (JWT)
-│   ├── services/            ← API client & token management
-│   ├── constants/           ← Colors, API config
-│   └── assets/              ← Logo & app icons
+├── 📱 frontend/               ← Application Mobile (React Native / Expo)
+│   ├── app/                   ← Écrans & navigation (expo-router)
+│   │   ├── (auth)/            ← Login, Inscription, Mot de passe oublié
+│   │   ├── (tabs)/            ← Accueil, Capture, Historique, Profil
+│   │   ├── (legal)/           ← CGU, Politique de confidentialité
+│   │   ├── guide.tsx          ← Guide utilisateur & FAQ
+│   │   └── results.tsx        ← Résultats d'analyse IA
+│   ├── contexts/              ← Contexte Auth (JWT)
+│   ├── services/              ← Client API & gestion des tokens
+│   └── constants/             ← Couleurs, configuration API
 │
-├── 🖥️ backend/              ← Flask REST API
-│   ├── app/                 ← Application code
-│   │   ├── ml_models/       ← TensorFlow Lite models
-│   │   ├── routes.py        ← API endpoints
-│   │   ├── services.py      ← Business logic
-│   │   ├── predict.py       ← ML prediction logic
-│   │   └── db.py            ← Database connection
-│   ├── run.py               ← Server entry point
-│   └── requirements.txt     ← Python dependencies
+├── 🖥️ backend/                ← API REST Flask
+│   ├── app/
+│   │   ├── ml_models/         ← Modèles TensorFlow Lite (.tflite)
+│   │   ├── routes.py          ← Endpoints API
+│   │   ├── services.py        ← Logique métier
+│   │   ├── predict.py         ← Prédiction ML
+│   │   └── db.py              ← Connexion MongoDB
+│   ├── run.py                 ← Point d'entrée serveur
+│   └── requirements.txt       ← Dépendances Python
 │
-└── 🤖 ai-ml/                ← AI/ML Models (coming soon)
-    ├── models/              ← TensorFlow / PyTorch models
-    ├── training/            ← Training scripts & datasets
-    └── preprocessing/       ← Image preprocessing pipelines
+├── 📄 rapport/                ← Rapport LaTeX du projet
+│
+├── 🐳 docker-compose.yml     ← Orchestration des conteneurs
+└── 📖 README.md
 ```
 
 ---
 
-## 📱 Mobile App — Features
+## 📱 Fonctionnalités de l'Application
 
-### 🔐 Authentication
-- Secure login & registration with **JWT tokens**
-- Tokens stored in **expo-secure-store** (encrypted)
-- Forgot password flow with email reset
-- Auth guard — protected routes with automatic redirects
+<table>
+<tr><td>
 
-### 🏠 Home Dashboard
-- Personalized greeting with health status card
-- Quick-access scan cards (Eye, Skin, Nail)
-- Daily health tips
-- Medical disclaimer
+### 🔐 Authentification
+- Connexion & inscription sécurisées avec **JWT**
+- Tokens chiffrés via **expo-secure-store**
+- Récupération de mot de passe
+- Routes protégées avec redirection automatique
 
-### 📸 Smart Capture
-- Camera capture with **expo-image-picker**
-- Gallery photo selection
-- Scan-type specific tips for optimal photo quality
-- Image preview before analysis
+</td><td>
 
-### 📊 AI Results
-- Color-coded severity levels (Normal / Moderate / High Risk)
-- AI confidence score with visual progress bar
-- Detailed condition description
-- Numbered health recommendations
+### 📸 Capture Intelligente
+- Prise de photo via **expo-image-picker**
+- Sélection depuis la galerie
+- Conseils spécifiques par type de scan
+- Prévisualisation avant analyse
 
-### 📜 History & Tracking
-- Chronological list of all past scans
-- Filter by scan type (Eye / Skin / Nail)
-- Severity badges and quick result preview
-- Tap to view full results
+</td></tr>
+<tr><td>
 
-### 👤 Profile & Settings
-- User profile with scan statistics
-- Links to Privacy Policy, Terms & Guide
-- Data export and deletion options
-- Secure logout
+### 📊 Résultats IA
+- Niveaux de sévérité colorés (Normal / Modéré / Élevé)
+- Score de confiance avec barre de progression
+- Description détaillée de la condition
+- Recommandations de santé personnalisées
 
-### 📖 Legal & Guide
-- **Terms of Service** — medical disclaimer, liability, data usage
-- **Privacy Policy** — HIPAA compliance, encryption, user rights
-- **App Guide** — step-by-step usage tutorial + FAQ
-- Accessible without authentication
+</td><td>
 
----
+### 📜 Historique & Suivi
+- Liste chronologique de tous les scans
+- Filtrage par type (Œil / Peau / Ongle)
+- Badges de sévérité
+- Consultation des résultats passés
 
-## 🛠️ Tech Stack
+</td></tr>
+<tr><td>
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Mobile** | React Native 0.81 + Expo SDK 54 | Cross-platform app |
-| **Navigation** | expo-router 6.0 | File-based routing |
-| **Language** | TypeScript 5.9 | Type safety |
-| **Auth** | JWT + expo-secure-store | Secure authentication |
-| **Camera** | expo-image-picker | Photo capture & gallery |
-| **Images** | expo-image | Optimized image rendering |
-| **Backend** | Flask (Python) | REST API server |
-| **AI/ML** | TensorFlow / TF Lite | Image classification models |
-| **Database** | MongoDB | Health data storage |
-| **Cloud** | Azure | Deployment & hosting |
+### 👤 Profil & Paramètres
+- Statistiques de scans
+- Export et suppression des données
+- Liens CGU, Confidentialité, Guide
+- Déconnexion sécurisée
+
+</td><td>
+
+### 📖 Guide & Légal
+- **CGU** — Avertissement médical, responsabilité
+- **Politique de confidentialité** — Chiffrement, droits
+- **Guide** — Tutoriel pas-à-pas + FAQ
+- Accessible sans authentification
+
+</td></tr>
+</table>
 
 ---
 
-## 🚀 Getting Started
+## 🛠️ Stack Technique
 
-### Prerequisites
-
-- **Node.js** ≥ 20 ([install via nvm](https://github.com/nvm-sh/nvm))
-- **Python** ≥ 3.8 (for backend)
-- **Expo Go** app on your phone ([Android](https://play.google.com/store/apps/details?id=host.exp.exponent) / [iOS](https://apps.apple.com/app/expo-go/id982107779))
-
-### Installation
-
-#### Mobile App
-
-```bash
-# Clone the repository
-git clone https://github.com/TimLaum/health-guard.git
-cd health-guard
-
-# Install mobile app dependencies
-cd HealthGuard
-npm install
-
-# Start the development server
-npx expo start
-```
-
-#### Backend API
-
-```bash
-# Navigate to backend directory
-cd backend
-
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the Flask server
-python run.py
-```
-
-### Running on Device
-
-1. Scan the **QR code** in the terminal with Expo Go
-2. Or press `a` for Android emulator / `i` for iOS simulator / `w` for web
-
----
-
-## 📁 App Navigation Map
-
-```
-┌─────────────────────────────────────────┐
-│               Root Layout               │
-│            (Auth Provider)              │
-├──────────┬──────────┬───────────────────┤
-│          │          │                   │
-│  (auth)  │  (tabs)  │   Public Routes   │
-│          │          │                   │
-│ • Login  │ • Home   │ • Terms           │
-│ • Signup │ • Scan   │ • Privacy         │
-│ • Forgot │ • History│ • Guide (modal)   │
-│          │ • Profile│                   │
-│          │          │ • Results (modal)  │
-└──────────┴──────────┴───────────────────┘
-```
+| Couche | Technologie | Rôle |
+|--------|------------|------|
+| **Mobile** | React Native 0.81 + Expo SDK 54 | Application cross-platform |
+| **Navigation** | expo-router 6.0 | Routage basé sur le système de fichiers |
+| **Langage** | TypeScript 5.9 | Typage statique |
+| **Auth** | JWT + expo-secure-store | Authentification sécurisée |
+| **Caméra** | expo-image-picker | Capture photo & galerie |
+| **Backend** | Flask 3.0.3 (Python) | Serveur API REST |
+| **IA / ML** | TensorFlow Lite | Classification d'images (3 modèles) |
+| **Base de données** | MongoDB 7 | Stockage des données de santé |
+| **DevOps** | Docker Compose | Conteneurisation & orchestration |
+| **Animations** | Reanimated 4.1 | Animations performantes (UI thread) |
 
 ---
 
 ## 🔌 API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/auth/login` | User login (returns JWT) |
-| `POST` | `/api/auth/register` | User registration |
-| `GET` | `/api/auth/profile` | Get user profile |
-| `POST` | `/api/analysis/upload` | Upload image for AI analysis |
-| `GET` | `/api/analysis/results/:id` | Get analysis results |
-| `GET` | `/api/analysis/history` | Get scan history |
-| `GET` | `/api/health` | Server health check |
+| Méthode | Route | Description | Auth |
+|---------|-------|-------------|:----:|
+| `GET` | `/health` | État de santé du serveur | — |
+| `POST` | `/signup` | Inscription utilisateur | — |
+| `POST` | `/auth` | Connexion (émission JWT) | — |
+| `POST` | `/re-auth` | Renouvellement du token | 🔒 |
+| `POST` | `/predict` | Analyse d'image ML (eye/skin/nail) | 🔒 |
+| `GET` | `/profile` | Consultation du profil | 🔒 |
+| `PUT` | `/profile` | Modification du profil | 🔒 |
+| `PUT` | `/change-password` | Changement de mot de passe | 🔒 |
+| `GET` | `/histories` | Historique des analyses | 🔒 |
+| `GET` | `/export-data` | Export des données (JSON) | 🔒 |
+| `DELETE` | `/delete-history` | Suppression de l'historique | 🔒 |
+
+---
+
+## 🚀 Démarrage Rapide
+
+### Prérequis
+
+- **Docker** & **Docker Compose** ([installer](https://docs.docker.com/get-docker/))
+- **Node.js** ≥ 20 ([installer via nvm](https://github.com/nvm-sh/nvm))
+- **Python** ≥ 3.8
+- **Expo Go** sur votre téléphone — [Android](https://play.google.com/store/apps/details?id=host.exp.exponent) · [iOS](https://apps.apple.com/app/expo-go/id982107779)
+
+### 🐳 Avec Docker (recommandé)
+
+```bash
+# Cloner le dépôt
+git clone https://github.com/TimLaum/health-guard.git
+cd health-guard
+
+# Lancer tous les services (MongoDB + Backend + Frontend)
+docker compose up --build
+```
+
+| Service | URL |
+|---------|-----|
+| Backend API | `http://localhost:5000` |
+| Frontend | `http://localhost:8081` |
+| MongoDB | `localhost:27017` |
+
+### 🔧 Sans Docker
+
+#### Backend
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python run.py
+```
+
+#### Frontend
+
+```bash
+cd frontend
+npm install
+npx expo start
+```
+
+> Scanner le **QR code** affiché avec Expo Go, ou appuyer sur `a` (Android) / `i` (iOS) / `w` (Web).
+
+---
+
+## 🤖 Modèles ML
+
+Le backend embarque **3 modèles TensorFlow Lite** pré-entraînés :
+
+| Modèle | Fichier | Analyse |
+|--------|---------|---------|
+| Scan oculaire | `eye_anemia_model.tflite` | Détection d'anémie oculaire |
+| Scan cutané | `best_skin_disease_model.tflite` | Classification de maladies de peau |
+| Scan unguéal | `nail_anemia_model.tflite` | Détection d'anémie unguéale |
+
+Les classes de sortie sont mappées via `class_mapping.json`.
 
 ---
 
 ## 🎨 Design System
 
-The app uses a **medical-themed color palette** built for trust and clarity:
+Palette médicale conçue pour la confiance et la lisibilité :
 
-| Color | Hex | Usage |
-|-------|-----|-------|
-| 🟦 Primary | `#0891B2` | Brand, buttons, links |
-| 🟪 Eye Scan | `#8B5CF6` | Purple — eye analysis |
-| 🟧 Skin Scan | `#F97316` | Orange — skin analysis |
-| 🩷 Nail Scan | `#EC4899` | Pink — nail analysis |
-| 🟩 Success | `#10B981` | Normal results |
-| 🟨 Warning | `#F59E0B` | Moderate results |
-| 🟥 Danger | `#EF4444` | High risk results |
-
----
-
-## 👥 Team
-
-| Role | Member | Responsibility |
-|------|--------|---------------|
-| 📱 **Mobile App** | [@Mohamedsellak](https://github.com/Mohamedsellak) | React Native / Expo frontend |
-| 🖥️ **Backend** | TBD | Flask API & database |
-| 🤖 **AI/ML** | [@0xCorentin](https://github.com/0xCorentin) | Model training & inference |
+| Couleur | Hex | Usage |
+|---------|-----|-------|
+| 🟦 Primary | `#0891B2` | Marque, boutons, liens |
+| 🟪 Scan Oculaire | `#8B5CF6` | Violet — analyse yeux |
+| 🟧 Scan Cutané | `#F97316` | Orange — analyse peau |
+| 🩷 Scan Unguéal | `#EC4899` | Rose — analyse ongles |
+| 🟩 Normal | `#10B981` | Résultat normal |
+| 🟨 Modéré | `#F59E0B` | Résultat modéré |
+| 🟥 Élevé | `#EF4444` | Résultat à risque |
 
 ---
 
-## 📄 License
+## 📁 Navigation de l'Application
 
-This project is developed as part of an **M1 academic project** (2025–2026).
+```
+┌─────────────────────────────────────────┐
+│             Root Layout                 │
+│           (Auth Provider)               │
+├──────────┬──────────┬───────────────────┤
+│          │          │                   │
+│  (auth)  │  (tabs)  │  Routes Publiques │
+│          │          │                   │
+│ • Login  │ • Accueil│ • CGU             │
+│ • Signup │ • Capture│ • Confidentialité  │
+│ • Forgot │ • Histo. │ • Guide (modal)   │
+│          │ • Profil │                   │
+│          │          │ • Résultats       │
+└──────────┴──────────┴───────────────────┘
+```
+
+---
+
+## 👥 Équipe
+
+| Rôle | Membre | Responsabilité |
+|------|--------|----------------|
+| 📱 **Frontend** | — | Application mobile React Native / Expo |
+| 🖥️ **Backend** | [@Mohamedsellak](https://github.com/Mohamedsellak) | API Flask, logique métier & base de données |
+| 🤖 **ML / IA** | — | Entraînement & inférence des modèles |
+| ⚙️ **DevOps** | — | Docker, CI/CD & déploiement |
+
+---
+
+## 📄 Licence
+
+Projet académique développé dans le cadre du **Master 1** — Année universitaire 2025–2026.
 
 ---
 
 <div align="center">
 
-**Built with ❤️ for better health awareness**
+**Construit avec ❤️ pour une meilleure sensibilisation à la santé**
 
 *HealthGuard Vision — Diagnostic Préventif par Image*
 

@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="logo.png" alt="HealthGuard Vision Logo" width="140" />
+
 # 🩺 HealthGuard Vision
 
 ### Diagnostic Préventif par Image
@@ -296,9 +298,9 @@ Palette médicale conçue pour la confiance et la lisibilité :
 
 | Rôle | Membre | Responsabilité |
 |------|--------|----------------|
-| 📱 **Frontend** | — | Application mobile React Native / Expo |
-| 🖥️ **Backend** | [@Mohamedsellak](https://github.com/Mohamedsellak) | API Flask, logique métier & base de données |
-| 🤖 **ML / IA** | — | Entraînement & inférence des modèles |
+| 📱 **Frontend** | [@Mohamedsellak](https://github.com/Mohamedsellak) | Application mobile React Native / Expo |
+| 🖥️ **Backend** | [@TimLaum](https://github.com/TimLaum) | API Flask, logique métier & base de données |
+| 🤖 **ML / IA** | [@0xCorentin](https://github.com/0xCorentin) | Entraînement & inférence des modèles |
 | ⚙️ **DevOps** | — | Docker, CI/CD & déploiement |
 
 ---

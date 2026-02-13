@@ -11,7 +11,7 @@ on:
 
 env:
   PYTHON_VERSION: '3.11'
-  DOCKER_IMAGE: healthguard-backend
+  DOCKER_IMAGE: healthguard-backend  
   
 jobs:
 
@@ -34,7 +34,7 @@ jobs:
           cd backend 
           pip install --upgrade pip
           pip install pylint isort black flake8
-          pip install -r requirements.txt
+          pip install -r app/requirements.txt
       
       - name: Run Black (Code Formatter)
         run: |
@@ -75,7 +75,7 @@ jobs:
         run: |
           cd backend
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r app/requirements.txt
           pip install pytest pytest-cov pytest-flask
       
       - name: Check ML Models exist
@@ -85,7 +85,6 @@ jobs:
           echo " All ML models found"
       
     
-  
 
   validate-models:
     name:  Validate ML Models
@@ -132,7 +131,7 @@ jobs:
               print(f"{model_file}")
               print(f"Input shape: {input_details[0]['shape']}")
               print(f"Output shape: {output_details[0]['shape']}")
-          
+              
               print("\n Models validated successfully!")
               print(f"Input shape: {input_details[0]['shape']}")
               print(f"Output shape: {output_details[0]['shape']}")
@@ -159,11 +158,10 @@ jobs:
       - name: Check for vulnerabilities (Safety)
         run: |
           cd backend
-          safety check --file requirements.txt --output text || true
+          safety check --file app/requirements.txt --output text || true
       
       - name: Run Bandit (Security Linter)
         run: |
           cd backend
           bandit -r app/ -ll -f json -o bandit-report.json || true
           bandit -r app/ -ll
-

@@ -1,0 +1,1430 @@
+% ============================================================================
+%  RAPPORT DE PROJET — HealthGuard Vision
+%  Diagnostic Préventif par Image — M1 2025-2026
+% ============================================================================
+\documentclass[12pt,a4paper,twoside]{report}
+
+% ── Encodage & Langue ──────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+% ── Mise en page ───────────────────────────────────────────────────────────
+\usepackage[
+  top=2.5cm, bottom=2.8cm,
+  left=2.8cm, right=2.8cm,
+  headheight=22pt,
+  marginparwidth=0pt,
+]{geometry}
+\usepackage{setspace}
+\setstretch{1.35}
+\usepackage{parskip}  % modern paragraph spacing (no indent, skip between)
+
+% ── Polices (Source Sans Pro — professional sans-serif) ────────────────────
+\usepackage[default,semibold]{sourcesanspro}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{tocloft}
+
+% ── Couleurs & Graphiques ─────────────────────────────────────────────────
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, shadows, fit}
+
+% ── Tableaux ───────────────────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+
+% ── Divers supplémentaires ─────────────────────────────────────────────────
+
+% ── En-têtes & Pieds de page (modern minimal) ────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\textsf{\thepage}}
+\fancyhead[LO]{\textsf{\small\color{hgprimary!80}\nouppercase{\leftmark}}}
+\fancyhead[RE]{\textsf{\small\color{hgprimary!80}\nouppercase{HealthGuard Vision}}}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{}
+% Thin colored rule instead of default black line
+\renewcommand{\headrule}{\vspace{-4pt}\textcolor{hgprimary!25}{\rule{\textwidth}{0.6pt}}}
+
+% ── Liens & Références ────────────────────────────────────────────────────
+\usepackage[
+  colorlinks=true,
+  linkcolor=MidnightBlue,
+  urlcolor=RoyalBlue,
+  citecolor=ForestGreen
+]{hyperref}
+
+% ── Divers ─────────────────────────────────────────────────────────────────
+\usepackage{enumitem}
+\usepackage{pifont}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable,hooks}
+\usepackage{fontawesome5}
+\usepackage{etoolbox}
+\usepackage{ragged2e}
+
+% ── Couleurs du projet ─────────────────────────────────────────────────────
+\definecolor{hgprimary}{HTML}{0891B2}
+\definecolor{hgsecondary}{HTML}{6366F1}
+\definecolor{hgsuccess}{HTML}{10B981}
+\definecolor{hgwarning}{HTML}{F59E0B}
+\definecolor{hgdanger}{HTML}{EF4444}
+\definecolor{hgeye}{HTML}{8B5CF6}
+\definecolor{hgskin}{HTML}{F97316}
+\definecolor{hgnail}{HTML}{EC4899}
+\definecolor{hgbg}{HTML}{F0FDFA}
+
+\definecolor{chapterbg}{HTML}{0E7490}
+\definecolor{sectionrule}{HTML}{0891B2}
+\definecolor{lightgray}{HTML}{94A3B8}
+\definecolor{chapternum}{HTML}{0891B2}
+\definecolor{chaptertxt}{HTML}{1E293B}
+
+% ── Modern Chapter & Section Styling ───────────────────────────────────────
+\titleformat{\chapter}
+  {\normalfont\sffamily\bfseries\fontsize{26}{30}\selectfont\color{chaptertxt}}
+  {\color{hgprimary}\thechapter\;\textcolor{hgprimary!30}{\vrule width 2pt height 0.9em}\;}
+  {0pt}
+  {}
+  []
+
+\titleformat{\section}
+  {\normalfont\sffamily\Large\bfseries}
+  {%
+    \tikz[baseline=(num.base)]{
+      \node[fill=hgprimary, rounded corners=3pt,
+            inner xsep=6pt, inner ysep=2pt,
+            font=\normalfont\sffamily\bfseries\color{white}] (num)
+        {\thesection};
+    }\;
+  }
+  {0pt}
+  {\color{hgprimary!90}}
+  []
+
+\titleformat{\subsection}
+  {\normalfont\sffamily\large\bfseries\color{hgprimary!70}}
+  {\textcolor{hgprimary}{\thesubsection}\;\textcolor{hgprimary!25}{\vrule width 1.5pt height 1em}\;}
+  {0pt}
+  {}
+
+\titlespacing*{\chapter}{0pt}{15pt}{10pt}
+\titlespacing*{\section}{0pt}{22pt}{10pt}
+\titlespacing*{\subsection}{0pt}{14pt}{6pt}
+
+% ── Modern TOC Styling ─────────────────────────────────────────────────────
+\renewcommand{\cftchapfont}{\sffamily\bfseries\color{hgprimary}}
+\renewcommand{\cftchappagefont}{\sffamily\bfseries\color{hgprimary}}
+\renewcommand{\cftsecfont}{\sffamily\color{hgprimary!80}}
+\renewcommand{\cftsecpagefont}{\sffamily\color{hgprimary!80}}
+\renewcommand{\cftsubsecfont}{\sffamily\small}
+\renewcommand{\cftsubsecpagefont}{\sffamily\small}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforechapskip}{8pt}
+\setlength{\cftbeforesecskip}{3pt}
+
+
+
+% ── Boîtes personnalisées (modern flat design) ────────────────────────────
+\newtcolorbox{infobox}[1][]{
+  enhanced,
+  colback=hgprimary!4,
+  colframe=hgprimary!40,
+  coltitle=white,
+  fonttitle=\sffamily\bfseries,
+  title=#1,
+  arc=2mm,
+  boxrule=0pt,
+  leftrule=3.5pt,
+  breakable,
+  shadow={1mm}{-1mm}{0mm}{black!8},
+  attach boxed title to top left={yshift=-2mm, xshift=4mm},
+  boxed title style={sharp corners, colback=hgprimary, arc=1.5mm},
+}
+
+\newtcolorbox{warnbox}[1][]{
+  enhanced,
+  colback=hgwarning!6,
+  colframe=hgwarning!40,
+  coltitle=white,
+  fonttitle=\sffamily\bfseries,
+  title=#1,
+  arc=2mm,
+  boxrule=0pt,
+  leftrule=3.5pt,
+  breakable,
+  shadow={1mm}{-1mm}{0mm}{black!8},
+  attach boxed title to top left={yshift=-2mm, xshift=4mm},
+  boxed title style={sharp corners, colback=hgwarning, arc=1.5mm},
+}
+
+% ── Commandes personnalisées ───────────────────────────────────────────────
+\newcommand{\hg}{\textsf{\textbf{\textcolor{hgprimary}{Health}\textcolor{hgprimary!70}{Guard} \textcolor{hgprimary!50}{Vision}}}}
+\newcommand{\tech}[1]{\texttt{\textcolor{hgprimary}{#1}}}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+% ── Modern caption styling ─────────────────────────────────────────────────
+\captionsetup{
+  font={sf,small},
+  labelfont={bf,color=hgprimary},
+  format=hang,
+  margin=10pt,
+}
+
+% ── Allow internal commands in document body ───────────────────────────────
+\makeatletter
+
+% ============================================================================
+%  DOCUMENT
+% ============================================================================
+\begin{document}
+
+% ── PAGE DE GARDE (modern geometric design) ───────────────────────────────
+\begin{titlepage}
+\begin{tikzpicture}[remember picture, overlay]
+  % ─── Full-page background ───
+  \fill[white] (current page.south west) rectangle (current page.north east);
+
+  % ─── Main header block ───
+  \fill[hgprimary] (current page.north west) rectangle
+    ([yshift=-11.5cm]current page.north east);
+
+  % ─── Layered wave cuts ───
+  \fill[hgprimary!80] ([yshift=-11.5cm]current page.north west) ..
+    controls ([xshift=5cm, yshift=-12.5cm]current page.north west) and
+    ([xshift=-5cm, yshift=-11.8cm]current page.north east) ..
+    ([yshift=-12.8cm]current page.north east) --
+    ([yshift=-11.5cm]current page.north east) -- cycle;
+  \fill[hgprimary!55] ([yshift=-11.5cm]current page.north west) ..
+    controls ([xshift=7cm, yshift=-13cm]current page.north west) and
+    ([xshift=-4cm, yshift=-12cm]current page.north east) ..
+    ([yshift=-13.2cm]current page.north east) --
+    ([yshift=-12.8cm]current page.north east) ..
+    controls ([xshift=-5cm, yshift=-11.8cm]current page.north east) and
+    ([xshift=5cm, yshift=-12.5cm]current page.north west) ..
+    ([yshift=-11.5cm]current page.north west) -- cycle;
+
+  % ─── Subtle geometric decorations in header ───
+  \fill[white, opacity=0.05] ([xshift=5cm, yshift=-2cm]current page.north east)
+    circle (8cm);
+  \fill[white, opacity=0.04] ([xshift=-4cm, yshift=-1.5cm]current page.north west)
+    circle (6cm);
+  \fill[white, opacity=0.03] ([xshift=2cm, yshift=-9cm]current page.north west)
+    circle (4cm);
+  \fill[white, opacity=0.025] ([xshift=-1cm, yshift=-7cm]current page.north east)
+    circle (3cm);
+  % Hexagon accent
+  \node[regular polygon, regular polygon sides=6, minimum size=2.5cm,
+        draw=white, opacity=0.06, line width=2pt, rotate=30]
+    at ([xshift=-2cm, yshift=-4cm]current page.north east) {};
+  \node[regular polygon, regular polygon sides=6, minimum size=1.5cm,
+        draw=white, opacity=0.04, line width=1.5pt, rotate=15]
+    at ([xshift=3cm, yshift=-6cm]current page.north west) {};
+
+  % ─── Thin gold accent line ───
+  \fill[hgwarning!70] ([yshift=-13.2cm, xshift=2.5cm]current page.north west)
+    rectangle ([yshift=-13.28cm, xshift=-2.5cm]current page.north east);
+
+\end{tikzpicture}
+
+\vspace*{0.6cm}
+
+\begin{center}
+  % ─── Logo badge ───
+  {\begin{tikzpicture}
+    \node[circle, fill=white, opacity=0.12, minimum size=2.6cm] {};
+    \node[circle, draw=white, opacity=0.25, line width=1.2pt, minimum size=2.8cm] {};
+    \node[color=white] {\fontsize{32}{32}\selectfont\faIcon{heartbeat}};
+  \end{tikzpicture}}\\[0.5cm]
+
+  % ─── Main title ───
+  {\fontsize{40}{46}\selectfont\sffamily\bfseries\color{white}\lsstyle HealthGuard Vision}\\[0.45cm]
+  {\color{white!40}\rule{5cm}{0.5pt}}\\[0.4cm]
+  {\Large\sffamily\color{white!95} Diagnostic Préventif par Image}\\[0.2cm]
+  {\small\sffamily\color{white!70} Application Mobile de Dépistage de Santé par Intelligence Artificielle}\\[2.2cm]
+
+  % ─── Main info card ───
+  \begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=white,
+    width=14cm,
+    arc=4mm,
+    boxrule=0pt,
+    shadow={2mm}{-2mm}{4mm}{black!12},
+    top=14pt, bottom=14pt, left=18pt, right=18pt,
+  ]
+  \centering
+  {\Large\sffamily\bfseries\color{hgprimary} Rapport de Projet}\\[0.1cm]
+  {\footnotesize\sffamily\color{lightgray} Master 1 --- Année Universitaire 2025--2026}\\[0.45cm]
+
+  % Project metadata with icons
+  \begin{tabular}{@{}>{\color{hgprimary}\footnotesize}c@{\,}>{\sffamily\bfseries\color{hgprimary!85}\small}l@{\;\;}
+                  >{\sffamily\small}l@{\qquad}
+                  >{\color{hgprimary}\footnotesize}c@{\,}>{\sffamily\bfseries\color{hgprimary!85}\small}l@{\;\;}
+                  >{\sffamily\small}l@{}}
+    \faIcon{book}      & Module       & M1PROJ &
+    \faIcon{clock}     & Durée        & 5 jours \\[0.25cm]
+    \faIcon{tasks}     & Méthode      & Scrum / Jira &
+    \faIcon{code-branch} & Versioning & Git / GitHub \\
+  \end{tabular}
+
+  \vspace{0.45cm}
+  {\color{hgprimary!15}\rule{11cm}{0.4pt}}\\[0.35cm]
+
+  {\footnotesize\sffamily\bfseries\color{hgprimary!60}\lsstyle TECHNOLOGIES CLÉS}\\[0.3cm]
+
+  % Tech badges with icons
+  \begin{tabular}{@{}c@{\;\;}c@{\;\;}c@{}}
+    \tikz[baseline=(b.base)]{\node[rounded corners=3pt, fill=hgprimary!8,
+      draw=hgprimary!25, line width=0.4pt, inner xsep=7pt, inner ysep=3pt] (b)
+      {\sffamily\small\color{hgprimary!80}\faIcon{python}\;\,Flask};} &
+    \tikz[baseline=(b.base)]{\node[rounded corners=3pt, fill=hgsecondary!8,
+      draw=hgsecondary!25, line width=0.4pt, inner xsep=7pt, inner ysep=3pt] (b)
+      {\sffamily\small\color{hgsecondary!80}\faIcon{react}\;\,React Native};} &
+    \tikz[baseline=(b.base)]{\node[rounded corners=3pt, fill=hgsuccess!8,
+      draw=hgsuccess!25, line width=0.4pt, inner xsep=7pt, inner ysep=3pt] (b)
+      {\sffamily\small\color{hgsuccess!80}\faIcon{microchip}\;\,TensorFlow Lite};} \\[0.35cm]
+    \tikz[baseline=(b.base)]{\node[rounded corners=3pt, fill=hgwarning!8,
+      draw=hgwarning!25, line width=0.4pt, inner xsep=7pt, inner ysep=3pt] (b)
+      {\sffamily\small\color{hgwarning!80}\faIcon{database}\;\,MongoDB};} &
+    \tikz[baseline=(b.base)]{\node[rounded corners=3pt, fill=hgdanger!8,
+      draw=hgdanger!25, line width=0.4pt, inner xsep=7pt, inner ysep=3pt] (b)
+      {\sffamily\small\color{hgdanger!80}\faIcon{docker}\;\,Docker};} &
+    \tikz[baseline=(b.base)]{\node[rounded corners=3pt, fill=hgeye!8,
+      draw=hgeye!25, line width=0.4pt, inner xsep=7pt, inner ysep=3pt] (b)
+      {\sffamily\small\color{hgeye!80}\faIcon{mobile-alt}\;\,Expo SDK 54};}
+  \end{tabular}
+  \end{tcolorbox}
+
+  \vfill
+
+  % ─── Team section ───
+  \begin{tcolorbox}[
+    enhanced,
+    colback=white,
+    colframe=hgprimary!12,
+    width=14cm,
+    arc=4mm,
+    boxrule=0.4pt,
+    shadow={1.5mm}{-1.5mm}{3mm}{black!6},
+    top=10pt, bottom=10pt,
+  ]
+  \centering
+  {\small\sffamily\bfseries\color{hgprimary}\lsstyle ÉQUIPE PROJET}\\[0.35cm]
+  \begin{tabular}{@{}c@{\;}c@{\;}c@{\;}c@{\;}c@{}}
+    % Frontend
+    \begin{tikzpicture}
+      \node[circle, fill=hgsecondary!10, minimum size=0.9cm] {};
+      \node[color=hgsecondary] {\small\faIcon{mobile-alt}};
+    \end{tikzpicture} &
+    % Backend
+    \begin{tikzpicture}
+      \node[circle, fill=hgprimary!10, minimum size=0.9cm] {};
+      \node[color=hgprimary] {\small\faIcon{server}};
+    \end{tikzpicture} &
+    % BDD
+    \begin{tikzpicture}
+      \node[circle, fill=hgwarning!10, minimum size=0.9cm] {};
+      \node[color=hgwarning] {\small\faIcon{database}};
+    \end{tikzpicture} &
+    % ML
+    \begin{tikzpicture}
+      \node[circle, fill=hgsuccess!10, minimum size=0.9cm] {};
+      \node[color=hgsuccess] {\small\faIcon{brain}};
+    \end{tikzpicture} &
+    % DevOps
+    \begin{tikzpicture}
+      \node[circle, fill=hgdanger!10, minimum size=0.9cm] {};
+      \node[color=hgdanger] {\small\faIcon{cogs}};
+    \end{tikzpicture} \\[0.15cm]
+    {\tiny\sffamily\bfseries\color{hgsecondary!80} Frontend} &
+    {\tiny\sffamily\bfseries\color{hgprimary!80} Backend} &
+    {\tiny\sffamily\bfseries\color{hgwarning!80} BDD} &
+    {\tiny\sffamily\bfseries\color{hgsuccess!80} ML / IA} &
+    {\tiny\sffamily\bfseries\color{hgdanger!80} DevOps} \\
+  \end{tabular}
+  \end{tcolorbox}
+\end{center}
+\thispagestyle{empty}
+\end{titlepage}
+
+% ── TABLE DES MATIÈRES ─────────────────────────────────────────────────────
+{\pagestyle{empty}
+\begin{center}
+  \vspace*{1cm}
+  {\fontsize{28}{34}\selectfont\sffamily\bfseries\color{hgprimary} Table des matières}\\[0.4cm]
+  {\color{hgprimary!25}\rule{4cm}{2pt}}
+\end{center}
+\vspace{0.5cm}
+\@starttoc{toc}
+\newpage
+}
+
+% ── LISTE DES FIGURES ──────────────────────────────────────────────────────
+{\pagestyle{empty}
+\begin{center}
+  \vspace*{1cm}
+  {\fontsize{22}{28}\selectfont\sffamily\bfseries\color{hgprimary} Liste des figures}\\[0.3cm]
+  {\color{hgprimary!25}\rule{3cm}{1.5pt}}
+\end{center}
+\vspace{0.5cm}
+\@starttoc{lof}
+\addcontentsline{toc}{chapter}{Liste des figures}
+\newpage
+}
+
+% ── LISTE DES TABLEAUX ────────────────────────────────────────────────────
+{\pagestyle{empty}
+\begin{center}
+  \vspace*{1cm}
+  {\fontsize{22}{28}\selectfont\sffamily\bfseries\color{hgprimary} Liste des tableaux}\\[0.3cm]
+  {\color{hgprimary!25}\rule{3cm}{1.5pt}}
+\end{center}
+\vspace{0.5cm}
+\@starttoc{lot}
+\addcontentsline{toc}{chapter}{Liste des tableaux}
+\newpage
+}
+
+% ============================================================================
+%  CHAPITRE 1 — INTRODUCTION
+% ============================================================================
+\chapter{Introduction}
+
+\section{Contexte du projet}
+
+Dans le cadre du module \textbf{DevOps \& Intégration Continue} du programme de Master 1, notre équipe a développé \hg{}, une application mobile innovante de diagnostic préventif par analyse d'images. Ce projet intensif sur 5 jours nous a permis de mettre en pratique l'ensemble des compétences acquises en développement logiciel, intelligence artificielle et méthodologies DevOps.
+
+Le secteur de la santé numérique (\textit{e-health}) connaît une croissance exponentielle, portée par les avancées en intelligence artificielle et la démocratisation des smartphones. \hg{} s'inscrit dans cette dynamique en proposant un outil de dépistage accessible, non-invasif et instantané, capable de détecter précocement certaines pathologies courantes à partir de simples photographies.
+
+\section{Problématique}
+
+L'accès aux soins préventifs reste un défi majeur dans de nombreuses régions. Les visites médicales régulières sont souvent négligées par manque de temps, de moyens ou de proximité avec un professionnel de santé. Notre application cherche à répondre à cette problématique en offrant un premier niveau de dépistage directement depuis le smartphone de l'utilisateur.
+
+\begin{warnbox}[Avertissement médical]
+\hg{} est un outil d'aide au dépistage développé dans un cadre académique. Il ne fournit \textbf{aucun diagnostic médical}. Les résultats doivent toujours être confirmés par un professionnel de santé qualifié.
+\end{warnbox}
+
+\section{Objectifs}
+
+Les objectifs principaux de ce projet sont :
+
+\begin{enumerate}[label=\textcolor{hgprimary}{\arabic*.}, leftmargin=2cm]
+  \item Concevoir et développer une \textbf{API RESTful Flask} pour le traitement d'images et l'inférence ML
+  \item Intégrer \textbf{3 modèles TensorFlow Lite} pré-entraînés pour la détection de diabète (rétinopathie), d'anémie et de maladies cutanées
+  \item Développer une \textbf{application mobile React Native} cross-platform avec capture photo et affichage des résultats
+  \item Mettre en place une base de données \textbf{MongoDB} conforme aux exigences HIPAA pour le stockage des métadonnées patients
+  \item Containeriser l'application avec \textbf{Docker} et orchestrer les services via \textbf{Docker Compose}
+  \item Appliquer les méthodologies \textbf{Scrum/Agile} avec Jira pour la gestion de projet
+\end{enumerate}
+
+\section{Organisation du document}
+
+Ce rapport est organisé comme suit :
+\begin{itemize}[label=\textcolor{hgprimary}{\textbullet}]
+  \item \textbf{Chapitre 2} : Architecture technique et choix technologiques
+  \item \textbf{Chapitre 3} : Développement du backend (API Flask, ML, base de données)
+  \item \textbf{Chapitre 4} : Développement du frontend (React Native / Expo)
+  \item \textbf{Chapitre 5} : DevOps, containerisation et déploiement
+  \item \textbf{Chapitre 6} : Méthodologie Agile et gestion de projet
+  \item \textbf{Chapitre 7} : Sécurité, tests et assurance qualité
+  \item \textbf{Chapitre 8} : Conclusion et perspectives
+\end{itemize}
+
+% ============================================================================
+%  CHAPITRE 2 — ARCHITECTURE TECHNIQUE
+% ============================================================================
+\chapter{Architecture technique}
+
+\section{Vue d'ensemble de l'architecture}
+
+\hg{} suit une architecture \textbf{client-serveur à trois couches} (3-tier), conforme aux bonnes pratiques du développement moderne :
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.8cm,
+  box/.style={
+    rectangle, rounded corners=6pt,
+    minimum width=4.5cm, minimum height=1.4cm,
+    text centered, font=\small\bfseries,
+    drop shadow={shadow xshift=1pt, shadow yshift=-1pt, opacity=0.15},
+  },
+  arrow/.style={
+    -{Stealth[length=3mm]}, thick, color=hgprimary!70,
+  },
+  label/.style={
+    font=\scriptsize\itshape, color=gray,
+  },
+]
+
+% Couche Présentation
+\node[box, fill=hgsecondary!15, draw=hgsecondary!50] (mobile)
+  {\faIcon{mobile-alt}\; Application Mobile};
+\node[below=0.3cm of mobile, font=\scriptsize, color=hgsecondary]
+  {React Native / Expo SDK 54};
+
+% Couche Métier
+\node[box, fill=hgprimary!15, draw=hgprimary!50, below=2cm of mobile] (api)
+  {\faIcon{server}\; API Flask};
+\node[below=0.3cm of api, font=\scriptsize, color=hgprimary]
+  {Python 3.11 + JWT};
+
+% Modèles ML
+\node[box, fill=hgsuccess!15, draw=hgsuccess!50, right=2.5cm of api] (ml)
+  {\faIcon{brain}\; Moteur ML};
+\node[below=0.3cm of ml, font=\scriptsize, color=hgsuccess]
+  {TensorFlow Lite × 3};
+
+% Couche Données
+\node[box, fill=hgwarning!15, draw=hgwarning!50, below=2cm of api] (db)
+  {\faIcon{database}\; MongoDB 7};
+\node[below=0.3cm of db, font=\scriptsize, color=hgwarning]
+  {Données patients + Historique};
+
+% Flèches
+\draw[arrow] (mobile) -- node[right, label] {REST / JSON} (api);
+\draw[arrow] (api) -- node[above, label] {Inférence} (ml);
+\draw[arrow] (api) -- node[right, label] {PyMongo} (db);
+\draw[arrow, dashed, hgsuccess!50] (ml) -- node[right, label] {Résultats} (api);
+
+% Conteneur Docker
+\node[draw=hgdanger!60, dashed, thick, rounded corners=8pt,
+      fit=(api)(ml)(db), inner sep=18pt,
+      label={[font=\small\bfseries\color{hgdanger}]above:Docker Compose}] {};
+
+\end{tikzpicture}
+\caption{Architecture globale de \hg{}}
+\label{fig:architecture}
+\end{figure}
+
+\section{Choix technologiques}
+
+\begin{table}[H]
+\centering
+\caption{Stack technologique de \hg{}}
+\label{tab:techstack}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|>{\bfseries}l|l|X|}
+\hline
+\textbf{Couche} & \textbf{Technologie} & \textbf{Justification} \\
+\hline
+Mobile      & React Native 0.81 + Expo SDK 54 & Cross-platform, écosystème riche, hot-reload \\
+Langage     & TypeScript 5.9                  & Typage statique, maintenabilité du code \\
+Navigation  & expo-router 6.0                 & Routage basé fichiers, conventions modernes \\
+Auth (client) & expo-secure-store + JWT       & Stockage sécurisé chiffré des tokens \\
+Caméra      & expo-image-picker               & Capture photo et sélection galerie \\
+Backend     & Flask 3.0.3 (Python 3.11)       & Léger, extensible, idéal pour les APIs ML \\
+Auth (serveur) & Flask-JWT-Extended 4.6.0     & Gestion JWT robuste et configurable \\
+ML/IA       & TensorFlow Lite                 & Inférence rapide, modèles optimisés mobile \\
+Prétraitement & Pillow 10.4 + OpenCV 4.10     & Manipulation d'images haute performance \\
+Base données & MongoDB 7 (PyMongo 4.8)        & Schéma flexible, adapté aux données médicales \\
+Conteneurs  & Docker + Docker Compose         & Isolation, reproductibilité, déploiement \\
+Serveur prod & Gunicorn 22.0                  & Serveur WSGI performant pour Flask \\
+Tests       & Pytest 8.3 + pytest-cov         & Framework de test Python standard \\
+Qualité     & Black, Flake8, Pylint, Bandit   & Formatage, linting, analyse de sécurité \\
+Gestion     & Jira (Scrum) + GitHub            & Agile + versioning + CI/CD \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Structure du projet}
+
+Le projet est organisé selon une séparation claire des responsabilités, avec deux grands modules indépendants communicant via une API REST :
+
+\begin{table}[H]
+\centering
+\caption{Organisation des modules du projet}
+\label{tab:structure}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Module} & \textbf{Technologie} & \textbf{Contenu principal} \\
+\hline
+\texttt{backend/}    & Flask / Python 3.11   & Factory pattern, endpoints REST, moteur ML, couche BDD \\
+\texttt{frontend/}   & React Native / Expo   & Écrans (tabs, auth, legal), services API, contexte auth \\
+\texttt{ml\_models/} & TensorFlow Lite       & 3 modèles pré-entraînés + mapping de classes \\
+Racine               & Docker Compose        & Orchestration des 3 services (MongoDB, API, Front) \\
+\hline
+\end{tabularx}
+\end{table}
+
+Le backend suit le pattern \textbf{Application Factory} de Flask avec une architecture en couches : routes (\texttt{routes.py}), services métier (\texttt{services.py}), accès aux données (\texttt{db.py}) et moteur de prédiction (\texttt{predict.py}). Le frontend utilise le système de routage par fichiers d'\texttt{expo-router}, avec des groupes de navigation pour l'authentification, les onglets principaux et les pages légales.
+
+% ============================================================================
+%  CHAPITRE 3 — BACKEND
+% ============================================================================
+\chapter{Développement Backend}
+
+\section{Architecture de l'API Flask}
+
+Le backend suit le pattern \textbf{Application Factory} de Flask, garantissant une initialisation propre et testable de l'application.
+
+\subsection{Configuration et initialisation}
+
+La fonction \texttt{create\_app()} centralise l'initialisation de l'application selon les bonnes pratiques du framework :
+
+\begin{itemize}[label=\textcolor{hgprimary}{\textbullet}]
+  \item \textbf{Chargement des variables d'environnement} via \texttt{python-dotenv} pour séparer les secrets du code source
+  \item \textbf{Connexion MongoDB} initialisée via \texttt{init\_db()} avec l'URI configurée en variable d'environnement
+  \item \textbf{Gestion JWT} : Configuration du \texttt{JWTManager} avec une clé secrète externalisée
+  \item \textbf{Blueprint Flask} : Enregistrement modulaire des routes API
+  \item \textbf{CORS} : Autorisations cross-origin pour les requêtes depuis l'application mobile
+\end{itemize}
+
+Cette architecture garantit une séparation claire entre configuration, logique métier et accès aux données, conformément aux principes \textit{twelve-factor app}.
+
+\subsection{Endpoints API REST}
+
+L'API expose les endpoints suivants, organisés selon une logique RESTful :
+
+\begin{table}[H]
+\centering
+\caption{Endpoints de l'API HealthGuard}
+\label{tab:endpoints}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|c|l|l|X|c|}
+\hline
+\textbf{\#} & \textbf{Méthode} & \textbf{Route} & \textbf{Description} & \textbf{Auth} \\
+\hline
+1  & \texttt{GET}    & \texttt{/health}          & Vérification état du serveur          & \xmark \\
+2  & \texttt{POST}   & \texttt{/signup}           & Inscription d'un utilisateur          & \xmark \\
+3  & \texttt{POST}   & \texttt{/auth}             & Connexion (retourne JWT)              & \xmark \\
+4  & \texttt{POST}   & \texttt{/re-auth}          & Renouvellement du token JWT           & \cmark \\
+5  & \texttt{POST}   & \texttt{/predict}          & Upload et analyse d'image             & \cmark \\
+6  & \texttt{GET}    & \texttt{/profile}          & Récupérer le profil utilisateur       & \cmark \\
+7  & \texttt{PUT}    & \texttt{/profile}          & Modifier le profil                    & \cmark \\
+8  & \texttt{PUT}    & \texttt{/change-password}  & Changer le mot de passe               & \cmark \\
+9  & \texttt{GET}    & \texttt{/histories}        & Historique des analyses                & \cmark \\
+10 & \texttt{GET}    & \texttt{/export-data}      & Exporter toutes les données           & \cmark \\
+11 & \texttt{DELETE} & \texttt{/delete-history}   & Supprimer l'historique                & \cmark \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Endpoint principal : \texttt{/predict}}
+
+L'endpoint de prédiction constitue le cœur fonctionnel de l'API. Son fonctionnement suit le processus suivant :
+
+\begin{enumerate}[label=\textcolor{hgprimary}{\arabic*.}]
+  \item \textbf{Authentification} : Vérification du JWT via le décorateur \texttt{@jwt\_required()}
+  \item \textbf{Validation} : Contrôle de la présence de l'image et du type d'analyse (\texttt{eye}, \texttt{skin} ou \texttt{nail})
+  \item \textbf{Analyse} : Appel au moteur ML via \texttt{analyze\_image(file, type, sex)}
+  \item \textbf{Historique} : Sauvegarde automatique du résultat dans la collection MongoDB
+  \item \textbf{Réponse} : Retour du résultat structuré en JSON (message, taux d'hémoglobine, recommandations)
+\end{enumerate}
+
+L'image est reçue via \texttt{multipart/form-data}, temporairement enregistrée sur le serveur pour l'inférence, puis supprimée après traitement.
+
+\section{Moteur de Machine Learning}
+
+\subsection{Architecture du module de prédiction}
+
+Le module \texttt{predict.py} implémente la classe \texttt{MedicalAnalyzer}, un analyseur médical unifié suivant le pattern \textbf{Singleton} pour optimiser l'utilisation mémoire des modèles TensorFlow Lite.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  class/.style={
+    rectangle, rounded corners=4pt,
+    minimum width=6cm,
+    draw=hgprimary!60, fill=hgprimary!5,
+    font=\small,
+  },
+  method/.style={font=\scriptsize\ttfamily, text=hgprimary!80},
+]
+
+\node[class] (analyzer) {
+  \begin{tabular}{c}
+    \textbf{\large MedicalAnalyzer} \\
+    \midrule
+    \scriptsize\texttt{models: Dict} \\
+    \scriptsize\texttt{supported\_types: List} \\
+    \midrule
+    \scriptsize\texttt{+ load\_model(type)} \\
+    \scriptsize\texttt{+ preprocess\_image(path, size)} \\
+    \scriptsize\texttt{+ analyze\_nail(path, sex)} \\
+    \scriptsize\texttt{+ analyze\_skin(path, top\_k)} \\
+    \scriptsize\texttt{+ analyze\_eye(path, sex)} \\
+    \scriptsize\texttt{+ analyze(path, type, **kwargs)} \\
+    \scriptsize\texttt{- \_analyze\_anemia(path, sex, type)} \\
+    \scriptsize\texttt{- \_interpret\_anemia\_result(hb, sex)} \\
+  \end{tabular}
+};
+
+\end{tikzpicture}
+\caption{Diagramme de classe \texttt{MedicalAnalyzer}}
+\label{fig:analyzer-class}
+\end{figure}
+
+\subsection{Les trois modèles TensorFlow Lite}
+
+\begin{table}[H]
+\centering
+\caption{Modèles ML embarqués dans \hg{}}
+\label{tab:models}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|l|l|X|}
+\hline
+\textbf{Modèle} & \textbf{Fichier} & \textbf{Sortie} & \textbf{Description} \\
+\hline
+\textcolor{hgeye}{Œil}   & \texttt{eye\_anemia\_model.tflite}       & Régression (g/L) & Prédit le taux d'hémoglobine à partir de l'image de l'œil \\
+\textcolor{hgnail}{Ongle} & \texttt{nail\_anemia\_model.tflite}      & Régression (g/L) & Prédit le taux d'hémoglobine à partir de l'image des ongles \\
+\textcolor{hgskin}{Peau}  & \texttt{best\_skin\_disease\_model.tflite} & Classification  & Classifie parmi plusieurs maladies cutanées \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Pipeline de prétraitement}
+
+Chaque image subit un prétraitement standardisé avant l'inférence :
+
+\begin{enumerate}[label=\textcolor{hgprimary}{\arabic*.}]
+  \item \textbf{Chargement} : Ouverture de l'image via Pillow (\texttt{PIL.Image.open})
+  \item \textbf{Conversion} : Conversion en mode RGB si nécessaire
+  \item \textbf{Redimensionnement} : Resize à $224 \times 224$ pixels avec interpolation Lanczos
+  \item \textbf{Normalisation} : Conversion en \texttt{float32} et normalisation dans $[0, 1]$
+  \item \textbf{Expansion} : Ajout d'une dimension batch (\texttt{expand\_dims})
+\end{enumerate}
+
+Ce pipeline garantit que chaque image est dans un format identique quel que soit le type d'appareil ou la résolution d'origine, assurant la reproductibilité des inférences.
+
+\subsection{Interprétation des résultats d'anémie}
+
+L'interprétation du taux d'hémoglobine prend en compte le \textbf{sexe biologique} du patient, avec des seuils différenciés conformes aux recommandations médicales internationales :
+
+\begin{table}[H]
+\centering
+\caption{Seuils d'interprétation de l'hémoglobine (en g/L)}
+\label{tab:thresholds}
+\begin{tabular}{|l|c|c|l|}
+\hline
+\textbf{Condition} & \textbf{Homme} & \textbf{Femme} & \textbf{Sévérité} \\
+\hline
+Anémie sévère         & $< 80$          & $< 80$          & \textcolor{hgdanger}{Sévère} \\
+Anémie modérée        & $80 - 100$      & $80 - 100$      & \textcolor{hgwarning}{Modérée} \\
+Anémie légère         & $100 - 130$     & $100 - 120$     & \textcolor{hgwarning}{Légère} \\
+Normal                & $130 - 170$     & $120 - 160$     & \textcolor{hgsuccess}{Normal} \\
+Élevé                 & $> 170$         & $> 160$         & \textcolor{hgwarning}{Élevé} \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Couche d'accès aux données (MongoDB)}
+
+\subsection{Schéma de base de données}
+
+La base MongoDB \texttt{healthguard} comprend deux collections principales avec validation par schéma JSON :
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  entity/.style={
+    rectangle, rounded corners=4pt,
+    minimum width=5.5cm,
+    draw=hgwarning!70, fill=hgwarning!8,
+    font=\small,
+  },
+  rel/.style={
+    -{Stealth[length=3mm]}, thick, color=hgprimary!60,
+  },
+]
+
+\node[entity] (users) {
+  \begin{tabular}{c}
+    \textbf{\faIcon{users}\; users} \\
+    \midrule
+    \scriptsize\texttt{\_id : ObjectId (PK)} \\
+    \scriptsize\texttt{email : String (unique)} \\
+    \scriptsize\texttt{password : String (hashé)} \\
+    \scriptsize\texttt{firstname : String} \\
+    \scriptsize\texttt{lastname : String} \\
+    \scriptsize\texttt{sex : Enum [M, F]} \\
+    \scriptsize\texttt{created\_at : Date} \\
+  \end{tabular}
+};
+
+\node[entity, right=3cm of users] (history) {
+  \begin{tabular}{c}
+    \textbf{\faIcon{history}\; history} \\
+    \midrule
+    \scriptsize\texttt{\_id : ObjectId (PK)} \\
+    \scriptsize\texttt{patient\_id : ObjectId (FK)} \\
+    \scriptsize\texttt{type : Enum [eye, skin, nail]} \\
+    \scriptsize\texttt{message : String} \\
+    \scriptsize\texttt{hb\_level : String} \\
+    \scriptsize\texttt{created\_at : Date} \\
+  \end{tabular}
+};
+
+\draw[rel] (users.east) -- node[above, font=\scriptsize\itshape] {1..*} (history.west);
+
+\end{tikzpicture}
+\caption{Schéma des collections MongoDB}
+\label{fig:dbschema}
+\end{figure}
+
+\subsection{Sécurité des données}
+
+\begin{itemize}[label=\textcolor{hgsuccess}{\cmark}]
+  \item \textbf{Hashage des mots de passe} : Utilisation de \texttt{werkzeug.security.generate\_password\_hash} (PBKDF2-SHA256)
+  \item \textbf{Validation de schéma} : Contraintes JSON Schema au niveau MongoDB (\texttt{\$jsonSchema})
+  \item \textbf{Index unique} : Index unique sur le champ \texttt{email} pour prévenir les doublons
+  \item \textbf{Index de performance} : Index sur \texttt{patient\_id} dans la collection \texttt{history}
+  \item \textbf{Sérialisation sécurisée} : Les mots de passe sont systématiquement supprimés des réponses API (\texttt{user.pop('password', None)})
+\end{itemize}
+
+% ============================================================================
+%  CHAPITRE 4 — FRONTEND
+% ============================================================================
+\chapter{Développement Frontend}
+
+\section{Architecture de l'application mobile}
+
+L'application mobile est développée avec \textbf{React Native 0.81} et \textbf{Expo SDK 54}, utilisant le framework de routage \texttt{expo-router} 6.0 qui offre un système de navigation basé sur le système de fichiers.
+
+\subsection{Système de navigation}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=0.8cm,
+  screen/.style={
+    rectangle, rounded corners=3pt,
+    minimum width=2.8cm, minimum height=0.8cm,
+    text centered, font=\scriptsize\bfseries,
+    drop shadow={shadow xshift=0.5pt, shadow yshift=-0.5pt, opacity=0.1},
+  },
+  group/.style={
+    rectangle, rounded corners=6pt,
+    draw=#1!60, fill=#1!8,
+    inner sep=8pt,
+  },
+  label/.style={font=\scriptsize\bfseries, color=#1},
+]
+
+% Root Layout
+\node[screen, fill=hgprimary!15, draw=hgprimary!40] (root) {Root Layout};
+
+% Onboarding
+\node[screen, fill=hgsuccess!15, draw=hgsuccess!40, below left=1.5cm and 3cm of root] (onboard) {Onboarding};
+
+% Auth group
+\node[group=hgsecondary, below left=1.5cm and 0cm of root] (authgroup) {
+  \begin{tabular}{c}
+    \scriptsize Login \\
+    \scriptsize Signup \\
+    \scriptsize Forgot PW \\
+  \end{tabular}
+};
+\node[label=hgsecondary, above=0.1cm of authgroup] {(auth)};
+
+% Tabs group
+\node[group=hgprimary, below right=1.5cm and 0cm of root] (tabsgroup) {
+  \begin{tabular}{c}
+    \scriptsize Accueil \\
+    \scriptsize Scan \\
+    \scriptsize Historique \\
+    \scriptsize Profil \\
+  \end{tabular}
+};
+\node[label=hgprimary, above=0.1cm of tabsgroup] {(tabs)};
+
+% Public
+\node[group=hgwarning, below right=1.5cm and 3cm of root] (publicgroup) {
+  \begin{tabular}{c}
+    \scriptsize Terms \\
+    \scriptsize Privacy \\
+    \scriptsize Guide \\
+    \scriptsize Results \\
+  \end{tabular}
+};
+\node[label=hgwarning, above=0.1cm of publicgroup] {Public};
+
+% Arrows
+\draw[-{Stealth}, thick, hgprimary!50] (root) -- (onboard);
+\draw[-{Stealth}, thick, hgprimary!50] (root) -- (authgroup);
+\draw[-{Stealth}, thick, hgprimary!50] (root) -- (tabsgroup);
+\draw[-{Stealth}, thick, hgprimary!50] (root) -- (publicgroup);
+
+\end{tikzpicture}
+\caption{Arbre de navigation de l'application}
+\label{fig:navigation}
+\end{figure}
+
+\subsection{Flux d'authentification}
+
+Le système d'authentification repose sur plusieurs couches de sécurité :
+
+\begin{enumerate}[label=\textcolor{hgprimary}{\arabic*.}]
+  \item \textbf{AuthProvider} (Context React) : Wrapping global de l'application pour gérer l'état d'authentification
+  \item \textbf{JWT Token} : Émis par le backend Flask avec une durée de validité de 24 heures
+  \item \textbf{expo-secure-store} : Stockage chiffré du token sur l'appareil (\texttt{Keychain} sur iOS, \texttt{Keystore} sur Android)
+  \item \textbf{Auto-refresh} : Renouvellement automatique du token via l'endpoint \texttt{/re-auth} au lancement
+  \item \textbf{Auth Guard} : Redirection automatique vers la page de connexion si non authentifié
+\end{enumerate}
+
+Le service API côté client \texttt{(services/api.ts)} implémente l'ensemble de cette logique de manière transparente : le stockage sécurisé du JWT utilise \texttt{Keychain} sur iOS et \texttt{Keystore} sur Android, tandis qu'un fallback \texttt{localStorage} est prévu pour la version web. Les en-têtes d'authentification sont automatiquement injectés dans chaque requête API.
+
+\section{Écrans principaux}
+
+\subsection{Onboarding (première utilisation)}
+
+L'écran d'onboarding présente l'application en \textbf{3 slides interactives} avec :
+\begin{itemize}
+  \item Animations fluides (\texttt{Animated API} de React Native)
+  \item Pagination avec indicateurs animés
+  \item Bouton « Passer » pour les utilisateurs existants
+  \item Persistance via \texttt{AsyncStorage} pour ne s'afficher qu'une seule fois
+\end{itemize}
+
+\subsection{Dashboard d'accueil}
+
+Le dashboard offre une vue personnalisée incluant :
+\begin{itemize}
+  \item Salutation personnalisée avec le prénom de l'utilisateur
+  \item Carte d'état de santé avec indicateur de dernier scan
+  \item \textbf{3 cartes de scan} (Oculaire, Cutané, Ongles) avec navigation directe
+  \item Section « Conseils santé du jour » avec 3 recommandations rotatives
+  \item Avertissement médical permanent en pied de page
+\end{itemize}
+
+\subsection{Capture et analyse}
+
+L'écran de capture implémente un workflow en 3 étapes :
+
+\begin{infobox}[Workflow de capture]
+\begin{enumerate}
+  \item \textbf{Sélection du type} : Grille de 3 cartes (Œil, Peau, Ongles)
+  \item \textbf{Prise de photo} : Via caméra ou galerie, avec conseils spécifiques par type
+  \item \textbf{Analyse} : Envoi à l'API, indicateur de chargement, puis navigation vers les résultats
+\end{enumerate}
+\end{infobox}
+
+\subsection{Affichage des résultats}
+
+L'écran de résultats affiche de manière différenciée selon le type d'analyse :
+
+\begin{itemize}
+  \item \textbf{Analyse d'anémie} (œil/ongle) :
+  \begin{itemize}
+    \item Bannière de sévérité colorée (normal/léger/modéré/sévère)
+    \item Message diagnostique textuel
+    \item Taux d'hémoglobine avec unité (g/L)
+    \item Recommandations numérotées adaptées à la sévérité
+  \end{itemize}
+  \item \textbf{Analyse cutanée} :
+  \begin{itemize}
+    \item Diagnostic principal mis en avant
+    \item Top-3 des prédictions classées par confiance
+    \item Recommandations dermatologiques
+  \end{itemize}
+\end{itemize}
+
+\subsection{Historique}
+
+L'écran d'historique propose :
+\begin{itemize}
+  \item Liste chronologique de tous les scans passés
+  \item Système de \textbf{filtres} par type (Tous / Œil / Peau / Ongles)
+  \item Pull-to-refresh pour actualiser les données
+  \item Navigation vers le détail de chaque résultat
+  \item État vide encourageant le premier scan
+\end{itemize}
+
+\subsection{Profil utilisateur}
+
+L'écran de profil offre une gestion complète du compte :
+\begin{itemize}
+  \item Avatar avec initiales
+  \item Statistiques (nombre de scans, ancienneté)
+  \item Sections organisées : Compte, Données de santé, Application
+  \item Modales de modification du profil et de changement de mot de passe
+  \item Export des données en JSON
+  \item Suppression de l'historique avec confirmation
+  \item Déconnexion sécurisée
+\end{itemize}
+
+\section{Design System}
+
+\subsection{Palette de couleurs}
+
+\begin{table}[H]
+\centering
+\caption{Palette de couleurs de \hg{}}
+\label{tab:colors}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Nom} & \textbf{Hex} & \textbf{Aperçu} & \textbf{Usage} \\
+\hline
+Primary    & \texttt{\#0891B2} & \colorbox{hgprimary}{\phantom{xxxx}} & Marque, boutons, liens \\
+Secondary  & \texttt{\#6366F1} & \colorbox{hgsecondary}{\phantom{xxxx}} & Technologie, accent \\
+Eye Scan   & \texttt{\#8B5CF6} & \colorbox{hgeye}{\phantom{xxxx}} & Analyses oculaires \\
+Skin Scan  & \texttt{\#F97316} & \colorbox{hgskin}{\phantom{xxxx}} & Analyses cutanées \\
+Nail Scan  & \texttt{\#EC4899} & \colorbox{hgnail}{\phantom{xxxx}} & Analyses ongles \\
+Success    & \texttt{\#10B981} & \colorbox{hgsuccess}{\phantom{xxxx}} & Résultats normaux \\
+Warning    & \texttt{\#F59E0B} & \colorbox{hgwarning}{\phantom{xxxx}} & Résultats modérés \\
+Danger     & \texttt{\#EF4444} & \colorbox{hgdanger}{\phantom{xxxx}} & Risque élevé \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Composants UI}
+
+L'interface respecte les principes du \textbf{Material Design} adapté au domaine médical :
+\begin{itemize}
+  \item Cartes avec ombres douces (\texttt{shadowOpacity: 0.06})
+  \item Coins arrondis généreux (\texttt{borderRadius: 14-24})
+  \item Hiérarchie typographique claire (poids 500-800)
+  \item Icônes Ionicons cohérentes et accessibles
+  \item Animations de transition fluides (\texttt{slide\_from\_right}, \texttt{slide\_from\_bottom})
+\end{itemize}
+
+\section{Service API côté client}
+
+Le service API (\texttt{services/api.ts}) fournit une couche d'abstraction complète avec :
+
+\begin{itemize}
+  \item \textbf{Types TypeScript} : Interfaces typées pour toutes les réponses API (\texttt{User}, \texttt{AnalysisResult}, \texttt{HistoryRecord})
+  \item \textbf{Type Guards} : Fonction \texttt{isSkinResult()} pour la discrimination de types
+  \item \textbf{Mode Mock} : Toggle \texttt{USE\_MOCK\_API} pour le développement sans backend
+  \item \textbf{Gestion d'erreurs} : Interception et formatage uniforme des erreurs réseau
+  \item \textbf{Upload multipart} : Gestion du \texttt{FormData} pour l'envoi d'images
+\end{itemize}
+
+% ============================================================================
+%  CHAPITRE 5 — DEVOPS
+% ============================================================================
+\chapter{DevOps, Containerisation et Déploiement}
+
+\section{Containerisation Docker}
+
+\subsection{Dockerfile Backend}
+
+Le Dockerfile du backend suit les bonnes pratiques de containerisation :
+
+\begin{itemize}
+  \item \textbf{Image de base légère} : \texttt{python:3.11-slim} pour minimiser la taille de l'image
+  \item \textbf{Dépendances système} : Installation de \texttt{libgl1} et \texttt{libglib2.0-0} nécessaires à OpenCV
+  \item \textbf{Nettoyage du cache} : Suppression de \texttt{/var/lib/apt/lists/*} et utilisation de \texttt{--no-cache-dir} pour pip
+  \item \textbf{Optimisation du cache Docker} : Copie des requirements séparée avant le code source
+  \item \textbf{Exposition} : Port 5000 pour l'API Flask
+\end{itemize}
+
+\subsection{Dockerfile Frontend}
+
+Le frontend est containerisé à partir de \texttt{node:20-slim}, avec installation des dépendances npm, copie du code source et démarrage d'Expo en mode web sur le port 8081.
+
+\subsection{Orchestration Docker Compose}
+
+Le fichier \texttt{docker-compose.yml} définit \textbf{3 services} interconnectés avec les caractéristiques suivantes : persistance des données MongoDB via un volume nommé, variables d'environnement pour la configuration des secrets, politique de redémarrage automatique, et dépendances inter-services.
+
+\begin{table}[H]
+\centering
+\caption{Services Docker Compose}
+\label{tab:services}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|l|l|X|}
+\hline
+\textbf{Service} & \textbf{Image} & \textbf{Port} & \textbf{Rôle} \\
+\hline
+\texttt{mongodb}  & \texttt{mongo:7}     & 27017 & Base de données NoSQL \\
+\texttt{backend}  & Build local          & 5000  & API Flask + ML \\
+\texttt{frontend} & Build local          & 8081  & Application Expo Web \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Caractéristiques de l'orchestration}
+
+\begin{itemize}[label=\textcolor{hgsuccess}{\cmark}]
+  \item \textbf{Persistance} : Volume nommé \texttt{mongo-data} pour les données MongoDB
+  \item \textbf{Redémarrage automatique} : Politique \texttt{unless-stopped}
+  \item \textbf{Dépendances} : \texttt{depends\_on} pour garantir l'ordre de démarrage
+  \item \textbf{Hot-reload} : Montage de volumes pour le développement en temps réel
+  \item \textbf{Isolation réseau} : Réseau Docker par défaut pour la communication inter-services
+  \item \textbf{Variables d'environnement} : Configuration externalisée des secrets
+\end{itemize}
+
+\section{Pipeline CI/CD avec GitHub}
+
+Le versioning du code est géré via \textbf{GitHub} avec un workflow Git structuré :
+
+\begin{itemize}
+  \item Branche \texttt{main} : Code de production stable
+  \item Branches de fonctionnalités (\texttt{feature/*}) : Développement isolé
+  \item Pull Requests avec revue de code
+  \item Intégration avec Jira pour la traçabilité des tickets
+\end{itemize}
+
+\section{Qualité de code}
+
+L'assurance qualité du code Python repose sur un ensemble d'outils complémentaires :
+
+\begin{table}[H]
+\centering
+\caption{Outils de qualité de code}
+\label{tab:quality}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Outil} & \textbf{Version} & \textbf{Fonction} \\
+\hline
+Black    & 24.8.0 & Formatage automatique du code Python \\
+Flake8   & 7.1.1  & Vérification du style (PEP 8) \\
+Pylint   & 3.2.7  & Analyse statique avancée \\
+isort    & 5.13.2 & Tri automatique des imports \\
+Bandit   & 1.7.9  & Analyse de sécurité du code \\
+Safety   & 3.2.7  & Détection de vulnérabilités dans les dépendances \\
+\hline
+\end{tabularx}
+\end{table}
+
+% ============================================================================
+%  CHAPITRE 6 — MÉTHODOLOGIE AGILE
+% ============================================================================
+\chapter{Méthodologie Agile et Gestion de Projet}
+
+\section{Framework Scrum}
+
+Le projet a été mené selon la méthodologie \textbf{Scrum}, adaptée au cadre contraint de 5 jours :
+
+\subsection{Rôles Scrum}
+
+\begin{itemize}
+  \item \textbf{Product Owner} : Responsable de la vision produit et de la priorisation du backlog
+  \item \textbf{Scrum Master} : Facilitateur des cérémonies et gardien du processus
+  \item \textbf{Équipe de développement} : 3 développeurs spécialisés (Mobile, Backend, ML)
+\end{itemize}
+
+\subsection{Outils de gestion}
+
+\begin{table}[H]
+\centering
+\caption{Outils de gestion de projet}
+\label{tab:tools}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Outil} & \textbf{Usage} & \textbf{Détails} \\
+\hline
+Jira       & Gestion Scrum      & Backlog, sprints, user stories, suivi des tâches \\
+GitHub     & Versioning + DevOps & Repository, branches, pull requests, CI/CD \\
+Discord    & Communication      & Canaux par équipe, partage d'écran, daily standups \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Planning sur 5 jours}
+
+\begin{table}[H]
+\centering
+\caption{Planning du sprint intensif de 5 jours}
+\label{tab:planning}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|c|l|X|}
+\hline
+\textbf{Jour} & \textbf{Thème} & \textbf{Livrables} \\
+\hline
+\textbf{J1} & Architecture \& Setup DevOps & Choix projet, architecture, Docker, pipeline CI de base \\
+\textbf{J2} & Développement \& CI/CD & API core, tests automatisés, pipeline complet, staging \\
+\textbf{J3} & Features Avancées \& Monitoring & Fonctionnalités avancées, APIs externes, métriques \\
+\textbf{J4} & Production \& Scalabilité & Déploiement, HA, tests de charge, documentation \\
+\textbf{J5} & Pitch \& Démonstration & Pitch startup, démo live (10 min + 5 min démo) \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Cérémonies Scrum}
+
+\begin{enumerate}[label=\textcolor{hgprimary}{\arabic*.}]
+  \item \textbf{Sprint Planning} (J1) : Définition du backlog et attribution des tâches
+  \item \textbf{Daily Standups} : Réunions quotidiennes de 15 minutes
+  \item \textbf{Sprint Review} (J5) : Démonstration des fonctionnalités développées
+  \item \textbf{Sprint Retrospective} (J5) : Analyse des points positifs et axes d'amélioration
+\end{enumerate}
+
+\section{Workflow Git}
+
+Le workflow Git adopté suit le modèle \textbf{GitHub Flow} simplifié :
+
+\begin{enumerate}[label=\textcolor{hgprimary}{\arabic*.}]
+  \item Création d'une branche depuis \texttt{main} pour chaque fonctionnalité/ticket Jira
+  \item Développement et commits atomiques avec messages conventionnels
+  \item Push et ouverture d'une Pull Request
+  \item Revue de code par un pair
+  \item Merge dans \texttt{main} après approbation
+\end{enumerate}
+
+% ============================================================================
+%  CHAPITRE 7 — SÉCURITÉ, TESTS ET QUALITÉ
+% ============================================================================
+\chapter{Sécurité, Tests et Assurance Qualité}
+
+\section{Mesures de sécurité implémentées}
+
+\subsection{Authentification et autorisation}
+
+\begin{table}[H]
+\centering
+\caption{Mesures de sécurité implémentées}
+\label{tab:security}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Mesure} & \textbf{Implémentation} \\
+\hline
+Hashage mots de passe & PBKDF2-SHA256 via \texttt{werkzeug.security} \\
+JWT Tokens            & Expiration 24h, clé secrète en variable d'environnement \\
+Stockage client       & \texttt{expo-secure-store} (Keychain iOS / Keystore Android) \\
+CORS                  & \texttt{Flask-CORS} configuré pour les origines autorisées \\
+Validation entrées    & Vérification de tous les champs requis côté serveur \\
+Suppression données   & Endpoint \texttt{DELETE /delete-history} pour le droit à l'oubli \\
+Export données        & Endpoint \texttt{GET /export-data} pour la portabilité \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Conformité HIPAA}
+
+\hg{} a été conçu en intégrant les principes de conformité \textbf{HIPAA} (Health Insurance Portability and Accountability Act) :
+
+\begin{itemize}[label=\textcolor{hgsuccess}{\cmark}]
+  \item \textbf{Chiffrement en transit} : TLS pour toutes les communications API
+  \item \textbf{Chiffrement au repos} : MongoDB avec encryption at rest sur Azure
+  \item \textbf{Contrôle d'accès} : Authentification JWT obligatoire pour les endpoints sensibles
+  \item \textbf{Minimisation des données} : Seules les métadonnées sont stockées, pas les images brutes de manière permanente
+  \item \textbf{Droit à la suppression} : L'utilisateur peut supprimer son historique à tout moment
+  \item \textbf{Droit à la portabilité} : Export des données en format JSON standard
+  \item \textbf{Politique de confidentialité} : Page dédiée intégrée dans l'application
+  \item \textbf{Conditions d'utilisation} : Avertissement médical explicite
+\end{itemize}
+
+\subsection{Analyse de sécurité du code}
+
+L'utilisation de \textbf{Bandit} (analyse sécurité Python) et \textbf{Safety} (audit des dépendances) permet de :
+\begin{itemize}
+  \item Détecter les vulnérabilités connues dans les packages utilisés
+  \item Identifier les patterns de code potentiellement dangereux
+  \item Vérifier l'absence de secrets en dur dans le code source
+\end{itemize}
+
+\section{Tests et assurance qualité}
+
+\subsection{Framework et stratégie de test}
+
+Le projet utilise \textbf{Pytest 8.3} comme framework de test principal, accompagné des extensions \texttt{pytest-cov} (couverture de code), \texttt{pytest-flask} (helpers Flask) et \texttt{pytest-mock} (isolation par mocking).
+
+La stratégie de test suit la \textbf{pyramide des tests} :
+
+\begin{enumerate}[label=\textcolor{hgprimary}{\arabic*.}]
+  \item \textbf{Tests unitaires} : Validation des fonctions individuelles (prétraitement, interprétation des seuils, sérialisation)
+  \item \textbf{Tests d'intégration} : Vérification de l'interaction entre les couches (Route $\rightarrow$ Service $\rightarrow$ DB)
+  \item \textbf{Tests ML} : Validation des modèles (temps d'inférence, format de sortie, cohérence des prédictions)
+  \item \textbf{Tests API} : Validation des endpoints (codes HTTP, format de réponse, gestion d'erreurs)
+\end{enumerate}
+
+\subsection{Qualité du frontend}
+
+Côté frontend, la qualité est assurée par :
+\begin{itemize}
+  \item \textbf{TypeScript strict} : Détection des erreurs de type à la compilation
+  \item \textbf{ESLint} : Vérification du style et des bonnes pratiques React
+  \item \textbf{Mode Mock API} : Toggle \texttt{USE\_MOCK\_API} permettant de tester l'UI indépendamment du backend
+\end{itemize}
+
+% ============================================================================
+%  CHAPITRE 8 — CONCLUSION
+% ============================================================================
+\chapter{Conclusion et Perspectives}
+
+\section{Bilan du projet}
+
+Le projet \hg{} a permis de développer avec succès une application complète de diagnostic préventif par image, intégrant l'ensemble de la chaîne de valeur depuis la capture mobile jusqu'à l'inférence par intelligence artificielle.
+
+\subsection{Objectifs atteints}
+
+\begin{table}[H]
+\centering
+\caption{Bilan des objectifs}
+\label{tab:bilan}
+\begin{tabularx}{\textwidth}{|X|c|}
+\hline
+\textbf{Objectif} & \textbf{Statut} \\
+\hline
+API Flask RESTful avec endpoints complets                    & \textcolor{hgsuccess}{\cmark} \\
+3 modèles TensorFlow Lite intégrés et fonctionnels           & \textcolor{hgsuccess}{\cmark} \\
+Application mobile React Native avec navigation complète      & \textcolor{hgsuccess}{\cmark} \\
+Base MongoDB avec schéma validé et sécurité des données       & \textcolor{hgsuccess}{\cmark} \\
+Containerisation Docker avec Docker Compose                   & \textcolor{hgsuccess}{\cmark} \\
+Authentification JWT sécurisée avec stockage chiffré           & \textcolor{hgsuccess}{\cmark} \\
+Historique des analyses avec filtrage et export               & \textcolor{hgsuccess}{\cmark} \\
+Gestion de profil complète (modification, mot de passe)       & \textcolor{hgsuccess}{\cmark} \\
+Pages légales (CGU, Politique de confidentialité)              & \textcolor{hgsuccess}{\cmark} \\
+Onboarding et guide utilisateur intégrés                      & \textcolor{hgsuccess}{\cmark} \\
+Méthodologie Scrum avec Jira                                  & \textcolor{hgsuccess}{\cmark} \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Compétences développées}
+
+Ce projet a permis de consolider et développer les compétences suivantes :
+
+\begin{itemize}[label=\textcolor{hgprimary}{\textbullet}]
+  \item \textbf{Full-stack development} : Maîtrise d'une architecture complète client-serveur
+  \item \textbf{Intelligence artificielle} : Intégration et déploiement de modèles TensorFlow Lite
+  \item \textbf{DevOps} : Containerisation, orchestration et pipeline CI/CD
+  \item \textbf{Sécurité} : Implémentation de mesures conformes aux standards de l'industrie
+  \item \textbf{Méthodologie Agile} : Pratique du Scrum dans un cadre de sprint intensif
+  \item \textbf{Travail d'équipe} : Collaboration via Git, Jira et communication asynchrone
+\end{itemize}
+
+\section{Perspectives d'amélioration}
+
+Plusieurs axes d'amélioration ont été identifiés pour les évolutions futures :
+
+\subsection{Améliorations techniques}
+
+\begin{enumerate}[label=\textcolor{hgsecondary}{\arabic*.}]
+  \item \textbf{Multi-stage Dockerfile} : Optimisation de l'image Docker pour atteindre $\sim$300 MB
+  \item \textbf{Pipeline CI/CD complet} : GitHub Actions avec tests automatiques, analyse de sécurité et déploiement
+  \item \textbf{Monitoring} : Intégration de Prometheus/Grafana pour le suivi des métriques ML
+  \item \textbf{Tests end-to-end} : Automatisation des tests UI avec Detox ou Maestro
+  \item \textbf{Cache Redis} : Mise en cache des résultats fréquents pour réduire la latence
+\end{enumerate}
+
+\subsection{Améliorations fonctionnelles}
+
+\begin{enumerate}[label=\textcolor{hgsecondary}{\arabic*.}]
+  \item \textbf{Notifications push} : Rappels de suivi de santé
+  \item \textbf{Mode hors-ligne} : Inférence TFLite directement sur l'appareil mobile
+  \item \textbf{Partage médecin} : Export PDF des résultats vers un professionnel de santé
+  \item \textbf{Multi-langue} : Support i18n (Français, Anglais, Arabe)
+  \item \textbf{Amélioration des modèles} : Transfer learning sur des datasets plus larges et diversifiés
+  \item \textbf{Tableau de bord analytics} : Visualisation des tendances de santé dans le temps
+\end{enumerate}
+
+\subsection{Améliorations DevOps}
+
+\begin{enumerate}[label=\textcolor{hgsecondary}{\arabic*.}]
+  \item \textbf{Déploiement Blue-Green} : Sur Azure Container Instances pour le zero-downtime
+  \item \textbf{Infrastructure as Code} : Terraform pour provisionner les ressources Azure
+  \item \textbf{Observabilité} : Logs structurés, tracing distribué, alerting
+  \item \textbf{Tests de charge} : Validation des performances sous forte charge
+  \item \textbf{Scan de vulnérabilités} : Intégration de Trivy pour le scan des images Docker
+\end{enumerate}
+
+\section{Conclusion}
+
+\hg{} démontre la faisabilité d'une solution de dépistage de santé préventif assisté par IA, accessible via smartphone. Le projet illustre comment les technologies modernes --- React Native, Flask, TensorFlow Lite, MongoDB, Docker --- peuvent être combinées de manière cohérente pour créer une application fonctionnelle, sécurisée et maintenable.
+
+Au-delà de l'aspect technique, ce projet nous a permis de vivre l'expérience d'un développement en équipe selon les méthodologies Agile, dans un cadre temporel contraint qui reflète les réalités du monde professionnel.
+
+\begin{warnbox}[Rappel important]
+Ce projet a été réalisé dans un cadre académique. Les résultats de l'analyse par IA ne constituent en aucun cas un diagnostic médical. Toute préoccupation de santé doit être adressée à un professionnel de santé qualifié.
+\end{warnbox}
+
+% ============================================================================
+%  ANNEXE
+% ============================================================================
+\appendix
+
+\chapter{Récapitulatif des dépendances}
+
+\section{Dépendances Backend (Python)}
+
+\begin{table}[H]
+\centering
+\caption{Principales dépendances Python}
+\label{tab:pydeps}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Package} & \textbf{Version} & \textbf{Rôle} \\
+\hline
+Flask              & 3.0.3   & Framework web principal \\
+Flask-JWT-Extended & 4.6.0   & Gestion de l'authentification JWT \\
+Flask-CORS         & 4.0.1   & Gestion des requêtes cross-origin \\
+TensorFlow         & 2.17.0  & Inférence des modèles de machine learning \\
+Pillow             & 10.4.0  & Traitement et manipulation d'images \\
+NumPy              & 1.26.4  & Calcul numérique et manipulation de tableaux \\
+OpenCV             & 4.10.0  & Prétraitement d'images (headless) \\
+PyMongo            & 4.8.0   & Driver MongoDB pour Python \\
+Gunicorn           & 22.0.0  & Serveur WSGI de production \\
+Pytest             & 8.3.2   & Framework de tests unitaires \\
+Black              & 24.8.0  & Formatage automatique du code \\
+Bandit             & 1.7.9   & Analyse de sécurité du code \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Dépendances Frontend (Node.js)}
+
+\begin{table}[H]
+\centering
+\caption{Principales dépendances npm}
+\label{tab:npmdeps}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Package} & \textbf{Version} & \textbf{Rôle} \\
+\hline
+React              & 19.1.0  & Bibliothèque UI déclarative \\
+React Native       & 0.81.5  & Framework mobile cross-platform \\
+Expo               & 54.0    & Plateforme de développement React Native \\
+expo-router        & 6.0     & Navigation basée sur le système de fichiers \\
+expo-image-picker  & 17.0    & Capture photo et sélection galerie \\
+expo-secure-store  & 15.0    & Stockage sécurisé chiffré (Keychain / Keystore) \\
+TypeScript         & 5.9     & Typage statique pour JavaScript \\
+Reanimated         & 4.1     & Animations performantes (UI thread) \\
+AsyncStorage       & 2.2     & Stockage local persistant \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Endpoints API}
+
+\begin{table}[H]
+\centering
+\caption{Récapitulatif des endpoints REST}
+\label{tab:endpoints-annex}
+\rowcolors{2}{hgbg}{white}
+\begin{tabularx}{\textwidth}{|l|l|X|c|}
+\hline
+\textbf{Méthode} & \textbf{Route} & \textbf{Description} & \textbf{Auth} \\
+\hline
+\texttt{GET}    & \texttt{/health}          & État de santé du serveur          & \xmark \\
+\texttt{POST}   & \texttt{/signup}           & Inscription utilisateur           & \xmark \\
+\texttt{POST}   & \texttt{/auth}             & Connexion (émission JWT)          & \xmark \\
+\texttt{POST}   & \texttt{/re-auth}          & Renouvellement token              & \cmark \\
+\texttt{POST}   & \texttt{/predict}          & Analyse d'image ML                & \cmark \\
+\texttt{GET}    & \texttt{/profile}          & Consultation du profil            & \cmark \\
+\texttt{PUT}    & \texttt{/profile}          & Modification du profil            & \cmark \\
+\texttt{PUT}    & \texttt{/change-password}  & Changement de mot de passe        & \cmark \\
+\texttt{GET}    & \texttt{/histories}        & Historique des analyses            & \cmark \\
+\texttt{GET}    & \texttt{/export-data}      & Export des données (JSON)         & \cmark \\
+\texttt{DELETE} & \texttt{/delete-history}   & Suppression de l'historique       & \cmark \\
+\hline
+\end{tabularx}
+\end{table}
+
+% ============================================================================
+%  FIN DU DOCUMENT
+% ============================================================================
+
+\end{document}
